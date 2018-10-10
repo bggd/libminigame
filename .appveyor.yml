@@ -1,5 +1,6 @@
 image:
   - Visual Studio 2017
+  - Ubuntu
 
 shallow_clone: true
 
@@ -17,7 +18,8 @@ install:
 build_script:
   - mkdir build
   - cd build
-  - cmake -G "Visual Studio 15 2017 Win64" ..
+  - cmd: cmake -G "Visual Studio 15 2017 Win64" ..
+  - sh: cmake ..
   - cmake --build . --config Debug
 
 test_script:
