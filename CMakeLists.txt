@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(libminigame)
+project(libminigame CXX)
 
 include(CTest)
 
@@ -12,7 +12,8 @@ if(BUILD_TESTING)
 
   add_executable(test_libminigame test/main.cpp)
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    target_compile_options(test_libminigame PRIVATE "-pthread")
+    find_package(Threads REQUIRED)
+    target_link_libraries(test_libminigame PRIVATE Thread::Threads)
   elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     target_compile_options(test_libminigame PRIVATE "/W4" "/permissive-")
   endif()
