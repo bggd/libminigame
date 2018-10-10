@@ -11,9 +11,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 if(BUILD_TESTING)
 
   add_executable(test_libminigame test/main.cpp)
-  if ("${CMAEK_CXX_COMPILER_ID}" STREQUAL "GNU")
+  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     target_compile_options(test_libminigame PRIVATE "-pthread")
-  elseif("${CMAEK_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     target_compile_options(test_libminigame PRIVATE "/W4" "/permissive-")
   endif()
   target_include_directories(test_libminigame PRIVATE
