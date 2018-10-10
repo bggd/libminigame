@@ -4,6 +4,12 @@ project(libminigame)
 
 include(CTest)
 
+set_target_properties(libminigame PROPERTIES
+  CXX_STANDARD 11
+  CXX_STANDARD_REQUIRED YES
+  CXX_EXTENSIONS NO
+)
+
 if(BUILD_TESTING)
 
   add_executable(test_libminigame test/main.cpp)
