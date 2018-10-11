@@ -50,6 +50,12 @@ void test_thread_queue()
   BOOST_TEST_EQ(queue.pop().value(), 49500);
   BOOST_TEST(queue.queue.empty());
 
+  BOOST_TEST(queue.is_close == false);
+  queue.close();
+  BOOST_TEST(queue.is_close);
+  std::optional<uint32_t> opt = queue.pop();
+  BOOST_TEST(opt.has_value() == false);
+
   ThreadQueue<const char*> queue_cstr;
   
   queue_cstr.push("foo.tga");
