@@ -23,7 +23,8 @@ void other_thread_2(ThreadQueue<uint32_t>* queue)
 {
   uint32_t num = 0;
   for (uint32_t i = 0; i < 10*100; ++i) {
-    num += queue->pop();
+    num += queue->pop().value();
+
   }
   queue->push(num);
 }
@@ -34,7 +35,7 @@ void test_thread_queue()
 
   queue.push(0);
 
-  BOOST_TEST_EQ(queue.pop(), 0);
+  BOOST_TEST_EQ(queue.pop().value(), 0);
 
   std::thread th(other_thread_2, &queue);
   std::thread threads[10];
@@ -46,7 +47,7 @@ void test_thread_queue()
   }
   th.join();
 
-  BOOST_TEST_EQ(queue.pop(), 49500);
+  BOOST_TEST_EQ(queue.pop().value(), 49500);
   BOOST_TEST(queue.queue.empty());
 
   ThreadQueue<const char*> queue_cstr;
@@ -54,8 +55,8 @@ void test_thread_queue()
   queue_cstr.push("foo.tga");
   queue_cstr.push("bar.wav");
 
-  BOOST_TEST_CSTR_EQ(queue_cstr.pop(), "foo.tga");
-  BOOST_TEST_CSTR_EQ(queue_cstr.pop(), "bar.wav");
+  BOOST_TEST_CSTR_EQ(queue_cstr.pop().value(), "foo.tga");
+  BOOST_TEST_CSTR_EQ(queue_cstr.pop().value(), "bar.wav");
 }
 
 #endif // MINIGAME_TEST_TEST_THREAD_THREAD_QUEUE_HPP_INCLUDED
