@@ -47,8 +47,9 @@ void test_thread_queue()
   }
   th.join();
 
+  BOOST_TEST(queue.is_empty() == false);
   BOOST_TEST_EQ(queue.pop().value(), 49500);
-  BOOST_TEST(queue.queue.empty());
+  BOOST_TEST(queue.is_empty());
 
   BOOST_TEST(queue.is_close == false);
   queue.close();

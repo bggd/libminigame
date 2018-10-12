@@ -18,11 +18,19 @@ struct ThreadQueue {
   std::queue<T> queue;
   std::atomic<bool> is_close = false;
 
+  bool is_empty() noexcept;
   void close() noexcept;
   void push(T v) noexcept;
   std::optional<T> pop() noexcept;
 
 };
+
+template <typename T>
+bool ThreadQueue<T>::is_empty() noexcept
+{
+  std::lock_guard<std::mutex> lk(this->mtx);
+  return this->queue.empty();
+}
 
 template <typename T>
 void ThreadQueue<T>::close() noexcept
@@ -38,12 +46,12 @@ void ThreadQueue<T>::push(T v) noexcept
     std::lock_guard<std::mutex> lk(this->mtx);
 
     this->queue.push(std::move(v));
-    this->cv.notify_one();
   }
   catch (const std::exception& e) {
     fprintf(stderr, "%s\n", e.what());
     abort();
   }
+  this->cv.notify_one();
 }
 
 template <typename T>
