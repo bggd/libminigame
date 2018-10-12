@@ -28,8 +28,14 @@ struct ThreadQueue {
 template <typename T>
 bool ThreadQueue<T>::is_empty() noexcept
 {
-  std::lock_guard<std::mutex> lk(this->mtx);
-  return this->queue.empty();
+  try {
+    std::lock_guard<std::mutex> lk(this->mtx);
+    return this->queue.empty();
+  }
+  catch (const std::exception& e) {
+    fprintf(stderr, "%s\n", e.what());
+    abort();
+  }
 }
 
 template <typename T>
