@@ -18,14 +18,14 @@ struct ThreadQueue {
   std::queue<T> queue;
   std::atomic<bool> is_close = false;
 
-  void close();
+  void close() noexcept;
   void push(T v) noexcept;
   std::optional<T> pop() noexcept;
 
 };
 
 template <typename T>
-void ThreadQueue<T>::close()
+void ThreadQueue<T>::close() noexcept
 {
   this->is_close = true;
   this->cv.notify_all();
