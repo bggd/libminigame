@@ -23,6 +23,6 @@ if(BUILD_TESTING)
     "${CMAKE_CURRENT_SOURCE_DIR}/third_party/boost-core/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/third_party/boost-config/include"
   )
-  add_test(NAME test COMMAND test_libminigame)
+  add_test(NAME test COMMAND test_libminigame WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test_data")
 
 endif()
