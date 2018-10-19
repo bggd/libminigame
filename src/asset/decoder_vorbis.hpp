@@ -19,7 +19,7 @@ struct DecoderVorbis {
         static_cast<int>(file_data.length),
         &channels, &sample_rate, &data
     );
-    if (data_len < 0) { std::nullopt; }
+    if (data_len < 0) { return std::nullopt; }
 
     if (sample_rate != 44100) {
       delete[] data;
