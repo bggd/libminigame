@@ -17,9 +17,10 @@ void test_asset_loader()
 {
   AssetLoader<asset_t, asset_specific_t, DecodeVisitor<asset_t>> al;
   al.load("circle.tga", AssetImageTGA{});
+  al.load("Upbeat Loop.ogg", AssetAudioVorbis{});
 
   BOOST_TEST_EQ(al.is_complete(), false);
-  BOOST_TEST_EQ(al.task_count, 1);
+  BOOST_TEST_EQ(al.task_count, 2);
 
   std::thread th_load(&decltype(al)::thread_for_load_file, &al);
   std::thread th_decode(&decltype(al)::thread_for_decode_buffer, &al);
@@ -30,7 +31,9 @@ void test_asset_loader()
 
   BOOST_TEST(al.is_complete());
   BOOST_TEST_EQ(al.task_count, 0);
+
   BOOST_TEST(al.get("circle.tga").has_value());
+  BOOST_TEST(al.get("Upbeat Loop.ogg").has_value());
 
   al.queue_load.close();
   al.queue_decode.close();
@@ -39,6 +42,7 @@ void test_asset_loader()
   th_decode.join();
 
   delete[] std::get<AssetImage>(al.assets["circle.tga"]).data;
+  delete[] std::get<AssetAudio>(al.assets["Upbeat Loop.ogg"]).data;
   al.assets.clear();
 }
 

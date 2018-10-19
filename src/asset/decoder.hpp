@@ -2,14 +2,18 @@
 #define MINIGAME_SRC_ASSET_DECODER_HPP_INCLUDED
 
 #include "decoder_tga.hpp"
+#include "decoder_vorbis.hpp"
 
 #include <assert.h>
 
 
 template <typename AssetOutput>
-struct DecodeVisitor : DecoderTGA<AssetOutput> {
+struct DecodeVisitor :
+  DecoderTGA<AssetOutput>,
+  DecoderVorbis<AssetOutput> {
   
   using DecoderTGA<AssetOutput>::operator();
+  using DecoderVorbis<AssetOutput>::operator();
 
   template <typename A, typename B>
   std::optional<AssetOutput> operator()(A&, B&)

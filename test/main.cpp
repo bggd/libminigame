@@ -5,6 +5,7 @@
 
 #define STBI_ONLY_TGA
 #define STB_IMAGE_IMPLEMENTATION
+#undef STB_VORBIS_HEADER_ONLY
 
 #ifdef _MSC_VER
   #pragma warning(push)

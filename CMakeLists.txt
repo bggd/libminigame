@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(libminigame CXX)
+project(libminigame C CXX)
 
 include(CTest)
 
@@ -10,7 +10,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(BUILD_TESTING)
 
+  add_library(stb_vorbis src/asset/stb_vorbis.c)
+
   add_executable(test_libminigame test/main.cpp)
+  target_link_libraries(test_libminigame stb_vorbis)
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     find_package(Threads REQUIRED)
     target_link_libraries(test_libminigame PRIVATE Threads::Threads)

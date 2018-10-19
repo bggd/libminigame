@@ -4,6 +4,7 @@
 #include <variant>
 #include <stdint.h>
 
+
 struct AssetImage {
 
   enum class PixelFormat {
@@ -21,7 +22,21 @@ struct AssetImage {
 
 };
 
+struct AssetAudio {
+
+  enum class Format {
+    STEREO_SHORT16,
+    MONO_SHORT16
+  };
+
+  Format format;
+  uint32_t  length;
+  int16_t* data;
+
+};
+
 struct AssetImageTGA {};
+struct AssetAudioVorbis {};
 
 struct AssetLoadedFileData {
 
@@ -30,7 +45,7 @@ struct AssetLoadedFileData {
 
 };
 
-using asset_t = std::variant<AssetImage>;
-using asset_specific_t = std::variant<AssetLoadedFileData, AssetImageTGA>;
+using asset_t = std::variant<AssetImage, AssetAudio>;
+using asset_specific_t = std::variant<AssetLoadedFileData, AssetImageTGA, AssetAudioVorbis>;
 
 #endif // MINIGAME_SRC_ASSET_ASSET_HPP_INCLUDED
