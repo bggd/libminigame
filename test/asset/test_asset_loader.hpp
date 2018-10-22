@@ -40,10 +40,6 @@ void test_asset_loader()
 
   th_load.join();
   th_decode.join();
-
-  delete[] std::get<AssetImage>(al.assets["circle.tga"]).data;
-  delete[] std::get<AssetAudio>(al.assets["Upbeat Loop.ogg"]).data;
-  al.assets.clear();
 }
 
 #endif // MINIGAME_TEST_ASSET_ASSET_MANAGER_HPP_INCLUDED

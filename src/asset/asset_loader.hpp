@@ -32,14 +32,14 @@ struct AssetLoader {
   ThreadQueue<AssetFile> queue_decode;
   std::atomic<uint32_t> task_count = 0;
   std::mutex mtx;
-  std::map<std::string_view, AssetOutput> assets;
+  std::map<std::string_view, std::shared_ptr<const AssetOutput>> assets;
 
   void thread_for_load_file() noexcept;
   void thread_for_decode_buffer() noexcept;
 
   void load(std::string_view path, asset_specific_t asset);
   bool is_complete() const noexcept;
-  std::optional<AssetOutput> get(std::string_view key) noexcept;
+  std::optional<std::weak_ptr<const AssetOutput>> get(std::string_view key) noexcept;
 
 };
 
@@ -90,7 +90,12 @@ void AssetLoader<AssetOutput, AssetVariant, AssetDecoder>::thread_for_decode_buf
       assert(opt.has_value());
       delete[] af.data;
       std::lock_guard<std::mutex> lk(this->mtx);
-      this->assets[af.path] = opt.value();
+      this->assets[af.path] = std::shared_ptr<AssetOutput>(
+        new AssetOutput(opt.value()),
+        [](AssetOutput* p){
+          std::visit([](auto x) { delete[] x.data; }, *p);
+        }
+      );
       this->task_count--;
     }
   }
@@ -118,13 +123,13 @@ bool AssetLoader<AssetOutput, AssetVariant, AssetDecoder>::is_complete() const n
 }
 
 template <typename AssetOutput, typename AssetVariant, typename AssetDecoder>
-std::optional<AssetOutput> AssetLoader<AssetOutput, AssetVariant, AssetDecoder>::get(std::string_view key) noexcept
+std::optional<std::weak_ptr<const AssetOutput>> AssetLoader<AssetOutput, AssetVariant, AssetDecoder>::get(std::string_view key) noexcept
 {
   try {
     std::lock_guard<std::mutex> lk(this->mtx);
     auto it = this->assets.find(key);
     if (it == this->assets.end()) { return std::nullopt; }
-    else { return it->second; }
+    else { return std::weak_ptr<const AssetOutput>(it->second); }
   }
   catch (const std::exception& e) {
     fprintf(stderr, "%s\n", e.what());
