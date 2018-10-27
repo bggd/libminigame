@@ -2,7 +2,7 @@
 #define MINIGAME_SRC_ASSET_DECODER_TGA_HPP_INCLUDED
 
 #include "asset.hpp"
-#include "stb_image.hpp"
+#include "../third_party/stb_image.hpp"
 
 
 template <typename AssetOutput>

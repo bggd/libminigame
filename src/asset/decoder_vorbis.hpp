@@ -2,7 +2,7 @@
 #define MINIGAME_SRC_ASSET_DECODER_VORBIS_HPP_INCLUDED
 
 #include "asset.hpp"
-#include "stb_vorbis.hpp"
+#include "../third_party/stb_vorbis.hpp"
 
 #include <optional>
 
