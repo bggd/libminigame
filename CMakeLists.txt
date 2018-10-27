@@ -11,8 +11,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
     
 if(BUILD_TESTING)
 
-  add_library(stb_image src/third_party/stb_image.c)
-  add_library(stb_vorbis src/third_party/stb_vorbis.c)
+  add_library(stb_image OBJECT src/third_party/stb_image.c)
+  add_library(stb_vorbis OBJECT src/third_party/stb_vorbis.c)
 
   add_executable(test_libminigame test/main.cpp)
   target_compile_options(test_libminigame PRIVATE
