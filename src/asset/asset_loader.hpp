@@ -50,16 +50,21 @@ void AssetLoader<AssetOutput, AssetVariant, AssetDecoder>::thread_for_load_file(
     for (;;) {
       std::optional<AssetFile> opt = std::move(this->queue_load.pop());
       if (!opt) { break; }
+
       AssetFile af = opt.value();
+
       std::ifstream file(af.path.data(), std::ios_base::binary | std::ios_base::ate);
       assert(file.is_open());
+
       std::string str;
       str.resize(file.tellg());
       file.seekg(0, std::ios_base::beg);
+
       if (file.read(&str[0], str.length())) {
         af.data = new uint8_t[str.length()];
         memcpy(af.data, str.data(), str.length());
         af.length = str.length();
+
         this->queue_decode.push(af);
       }
       else {
@@ -81,21 +86,29 @@ void AssetLoader<AssetOutput, AssetVariant, AssetDecoder>::thread_for_decode_buf
     for (;;) {
       std::optional<AssetFile> opt_af = std::move(this->queue_decode.pop());
       if (!opt_af) { break; }
+
       AssetFile af = opt_af.value();
+
       AssetLoadedFileData d;
       d.data = af.data;
       d.length = af.length;
+
       asset_specific_t v = d;
+
       std::optional<AssetOutput> opt = std::visit(decoder, af.asset_type, v);
       assert(opt.has_value());
+
       delete[] af.data;
+
       std::lock_guard<std::mutex> lk(this->mtx);
+
       this->assets[af.path] = std::shared_ptr<AssetOutput>(
         new AssetOutput(opt.value()),
         [](AssetOutput* p){
           std::visit([](auto x) { delete[] x.data; }, *p);
         }
       );
+
       this->task_count--;
     }
   }
@@ -112,7 +125,9 @@ void AssetLoader<AssetOutput, AssetVariant, AssetDecoder>::load(std::string_view
   AssetFile af;
   af.path = path;
   af.asset_type = asset;
+
   this->task_count++;
+
   this->queue_load.push(af);
 }
 
@@ -127,7 +142,9 @@ std::optional<std::weak_ptr<const AssetOutput>> AssetLoader<AssetOutput, AssetVa
 {
   try {
     std::lock_guard<std::mutex> lk(this->mtx);
+
     auto it = this->assets.find(key);
+
     if (it == this->assets.end()) { return std::nullopt; }
     else { return std::weak_ptr<const AssetOutput>(it->second); }
   }
