@@ -3,8 +3,10 @@
 
 #include "../thread/thread_queue.hpp"
 #include "asset.hpp"
+#include "../third_party/debug_assert.hpp"
 
 #include <variant>
+#include <optional>
 #include <map>
 #include <string_view>
 #include <memory>
@@ -54,10 +56,13 @@ void AssetLoader<AssetOutput, AssetVariant, AssetDecoder>::thread_for_load_file(
       AssetFile af = opt.value();
 
       std::ifstream file(af.path.data(), std::ios_base::binary | std::ios_base::ate);
-      assert(file.is_open());
+
+      DEBUG_ASSERT(file.is_open(), assert_handler{});
 
       std::string str;
-      str.resize(file.tellg());
+      auto file_len = file.tellg();
+      DEBUG_ASSERT(file_len, assert_handler{});
+      str.resize(file_len);
       file.seekg(0, std::ios_base::beg);
 
       if (file.read(&str[0], str.length())) {
@@ -96,7 +101,8 @@ void AssetLoader<AssetOutput, AssetVariant, AssetDecoder>::thread_for_decode_buf
       asset_specific_t v = d;
 
       std::optional<AssetOutput> opt = std::visit(decoder, af.asset_type, v);
-      assert(opt.has_value());
+
+      DEBUG_ASSERT(opt.has_value(), assert_handler{});
 
       delete[] af.data;
 

@@ -1,9 +1,12 @@
 #ifndef MINIGAME_SRC_ASSET_DECODER_HPP_INCLUDED
 #define MINIGAME_SRC_ASSET_DECODER_HPP_INCLUDED
 
+#include "../third_party/debug_assert.hpp"
+
 #include "decoder_tga.hpp"
 #include "decoder_vorbis.hpp"
 
+#include <optional>
 #include <assert.h>
 
 
@@ -18,7 +21,7 @@ struct DecodeVisitor :
   template <typename A, typename B>
   std::optional<AssetOutput> operator()(A&, B&)
   {
-    assert(!"UNREACHABLE");
+    DEBUG_UNREACHABLE(assert_handler{});
     return std::nullopt;
   }
 };

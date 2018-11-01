@@ -3,6 +3,10 @@
 
 #include "asset.hpp"
 #include "../third_party/stb_image.hpp"
+#include "../third_party/debug_assert.hpp"
+
+#include <optional>
+#include <stdint.h>
 
 
 template <typename AssetOutput>
@@ -16,7 +20,9 @@ struct DecoderTGA {
       static_cast<int>(file_data.length),
       &x, &y, &n, 0
     );
-    if (data == nullptr) { return std::nullopt; }
+
+    DEBUG_ASSERT(data, assert_handler{}, stbi_failure_reason());
+    DEBUG_ASSERT(n > 0 && n < 5, assert_handler{});
 
     AssetImage img;
     if (n == 1) { img.format = AssetImage::PixelFormat::GREY; }

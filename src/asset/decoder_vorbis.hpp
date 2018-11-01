@@ -3,8 +3,10 @@
 
 #include "asset.hpp"
 #include "../third_party/stb_vorbis.hpp"
+#include "../third_party/debug_assert.hpp"
 
 #include <optional>
+#include <stdint.h>
 
 
 template <typename AssetOutput>
@@ -19,12 +21,10 @@ struct DecoderVorbis {
         static_cast<int>(file_data.length),
         &channels, &sample_rate, &data
     );
-    if (data_len < 0) { return std::nullopt; }
 
-    if (sample_rate != 44100) {
-      delete[] data;
-      return std::nullopt;
-    }
+    DEBUG_ASSERT(data_len, assert_handler{});
+    DEBUG_ASSERT(sample_rate == 44100, assert_handler{});
+    DEBUG_ASSERT(channels == 1 || channels == 2, assert_handler{});
 
     AssetAudio audio;
     if (channels == 1) {
@@ -33,10 +33,7 @@ struct DecoderVorbis {
     else if (channels == 2) {
       audio.format = AssetAudio::Format::STEREO_SHORT16;
     }
-    else {
-      delete[] data;
-      return std::nullopt;
-    }
+
     audio.length = data_len;
     audio.data = data;
     return audio;
