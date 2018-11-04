@@ -10,21 +10,29 @@ init:
 install:
   - mkdir third_party
   - cd third_party
+
   - git clone -b boost-1.68.0 --depth=1 https://github.com/boostorg/assert boost-assert
   - git clone -b boost-1.68.0 --depth=1 https://github.com/boostorg/config boost-config
   - git clone -b boost-1.68.0 --depth=1 https://github.com/boostorg/core boost-core
   - git clone --depth=1 https://github.com/nothings/stb
   - git clone -b v1.3.3 --depth=1 https://github.com/foonathan/debug_assert
+
   - cd ..
   - git clone --depth=1 https://github.com/bggd/test_data
 
+  - cmd: vcpkg install openal-soft:x64-windows
+  - cmd: copy C:\tools\vcpkg\installed\x64-windows\bin\OpenAL32.dll test_data
   - sh: sudo apt-get install -y libopenal-dev
 
 build_script:
   - mkdir build
   - cd build
+
+  - cmd: set OPENALDIR=C:\tools\vcpkg\installed\x64-windows
   - cmd: cmake -G "Visual Studio 15 2017 Win64" ..
+
   - sh: cmake ..
+
   - cmake --build . --config Debug
 
 test_script:
