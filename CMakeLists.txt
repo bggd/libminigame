@@ -14,6 +14,14 @@ if(BUILD_TESTING)
   add_library(stb_image OBJECT src/third_party/stb_image.c)
   add_library(stb_vorbis OBJECT src/third_party/stb_vorbis.c)
 
+  set(Libraries stb_image stb_vorbis)
+  if (CMAKE_CXX_COMPILER_ID STREQUAL GNU)
+    find_package(Threads REQUIRED)
+    set(Libraries ${Libraries} Threads::Threads)
+  endif()
+  find_package(OpenAL REQUIRED)
+  set(Libraries ${Libraries} ${OPENAL_LIBRARY})
+
   add_executable(test_libminigame test/main.cpp)
   target_compile_options(test_libminigame PRIVATE
     $<$<CXX_COMPILER_ID:GNU>: -pedantic -Wall -Wextra -Werror>
@@ -23,13 +31,9 @@ if(BUILD_TESTING)
     third_party/boost-assert/include
     third_party/boost-core/include
     third_party/boost-config/include
+    ${OPENAL_INCLUDE_DIR}
   )
-  if (CMAKE_CXX_COMPILER_ID STREQUAL GNU)
-    find_package(Threads REQUIRED)
-    target_link_libraries(test_libminigame PRIVATE Threads::Threads stb_image stb_vorbis)
-  else()
-    target_link_libraries(test_libminigame PRIVATE stb_image stb_vorbis)
-  endif()
+  target_link_libraries(test_libminigame PRIVATE ${Libraries})
   add_test(NAME test COMMAND test_libminigame WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test_data)
 
 endif()
