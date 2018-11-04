@@ -18,7 +18,7 @@ install:
   - cd ..
   - git clone --depth=1 https://github.com/bggd/test_data
 
-  - sh: sudo apt-get install libopenal-dev
+  - sh: sudo apt-get install -y libopenal-dev
 
 build_script:
   - mkdir build
