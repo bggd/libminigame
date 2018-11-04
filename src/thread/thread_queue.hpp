@@ -51,7 +51,7 @@ void ThreadQueue<T>::push(T v) noexcept
   try {
     std::lock_guard<std::mutex> lk(this->mtx);
 
-    this->queue.push(std::move(v));
+    this->queue.push(v);
   }
   catch (const std::exception& e) {
     fprintf(stderr, "%s\n", e.what());
@@ -74,10 +74,10 @@ std::optional<T> ThreadQueue<T>::pop() noexcept
 
     if (this->is_close) { return std::nullopt; }
 
-    T&& v(std::move(this->queue.front()));
+    T v = this->queue.front();
     this->queue.pop();
 
-    return std::move(v);
+    return v;
   }
   catch (const std::exception& e) {
     fprintf(stderr, "%s\n", e.what());
