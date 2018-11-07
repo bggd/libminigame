@@ -1,6 +1,6 @@
 image:
-  - Visual Studio 2017
   - Ubuntu1804
+  - Visual Studio 2017
 
 shallow_clone: true
 
@@ -22,6 +22,7 @@ install:
 
   - cmd: vcpkg install openal-soft:x64-windows
   - cmd: copy C:\tools\vcpkg\installed\x64-windows\bin\OpenAL32.dll test_data
+
   - sh: sudo apt-get install -y libopenal-dev
 
 build_script:
