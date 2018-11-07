@@ -40,7 +40,7 @@ struct AssetAudioVorbis {};
 
 struct AssetLoadedFileData {
 
-  const uint8_t* data;
+  uint8_t* data;
   size_t length;
 
 };
