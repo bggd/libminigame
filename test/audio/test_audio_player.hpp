@@ -36,7 +36,7 @@ void deinit_openal()
 
 void test_audio_player()
 {
-  if (init_openal() == false) { return; }
+  BOOST_TEST(init_openal());
 
   AssetLoader<asset_t, asset_specific_t, DecodeVisitor<asset_t>> al;
   al.load("Upbeat Loop.ogg", AssetAudioVorbis{});

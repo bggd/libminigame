@@ -38,6 +38,6 @@ build_script:
 
 test_script:
   - cmd: set ALSOFT_DRIVERS=null
-  - sh: ALSOFT_DRIVERS=null
+  - sh: export ALSOFT_DRIVERS=null
 
   - ctest -C Debug --output-on-failure
