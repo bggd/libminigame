@@ -34,10 +34,10 @@ build_script:
 
   - sh: cmake ..
 
-  - cmd: set CL=/DMINIGAME_ON_CI
-  - cmd: cmake --build . --config Debug
-
-  - sh: make CFLAGS=-DMINIGAME_ON_CI
+  - cmake --build . --config Debug
 
 test_script:
+  - cmd: set ALSOFT_DRIVERS=null
+  - sh: ALSOFT_DRIVERS=null
+
   - ctest -C Debug --output-on-failure
