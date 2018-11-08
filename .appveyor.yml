@@ -37,7 +37,7 @@ build_script:
   - cmd: set CL=/DMINIGAME_ON_CI
   - cmd: cmake --build . --config Debug
 
-  - sh: cmake --build . --config Debug - CXXFLAGS+=-DMINIGAME_ON_CI
+  - sh: cmake --build . --config Debug -- CXXFLAGS+=-DMINIGAME_ON_CI
 
 test_script:
   - ctest -C Debug --output-on-failure
