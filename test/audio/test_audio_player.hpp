@@ -7,11 +7,14 @@
 
 #include <thread>
 
+
 ALCdevice* g_al_device;
 ALCcontext* g_al_ctx;
 
+
 bool init_openal()
 {
+#ifndef MINIGAME_ON_CI
   g_al_device = alcOpenDevice(nullptr);
   if (!g_al_device) { return false; }
 
@@ -21,15 +24,18 @@ bool init_openal()
   alcMakeContextCurrent(g_al_ctx);
 
   alGetError();
+#endif
 
   return true;
 }
 
 void deinit_openal()
 {
+#ifndef MINIGAME_ON_CI
   alcMakeContextCurrent(nullptr);
   alcDestroyContext(g_al_ctx);
   alcCloseDevice(g_al_device);
+#endif
 }
 
 void test_audio_player()
@@ -52,9 +58,11 @@ void test_audio_player()
     std::thread th_init(&decltype(player)::thread_for_init, &player);
     std::thread th_stream(&decltype(player)::thread_for_stream, &player);
 
+#ifndef MINIGAME_ON_CI
     auto i = player.play(al.get("Upbeat Loop.ogg").value());
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+#endif
 
     player.queue.close();
     player.is_close = true;
