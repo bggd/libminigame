@@ -51,17 +51,19 @@ void test_audio_player()
   {
     AudioPlayer player;
 
-    std::thread th_init(&decltype(player)::thread_for_init, &player);
+    std::thread th_cmd(&decltype(player)::thread_for_command, &player);
     std::thread th_stream(&decltype(player)::thread_for_stream, &player);
 
     auto i = player.play(al.get("Upbeat Loop.ogg").value());
+    i->push_pause_cmd();
+    i->push_play_cmd();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     player.queue.close();
     player.is_close = true;
 
-    th_init.join();
+    th_cmd.join();
     th_stream.join();
   }
 

@@ -12,6 +12,7 @@
 #include <chrono>
 #include <optional>
 #include <array>
+#include <utility>
 
 #define MINIGAME_AUDIO_BUFFER_SIZE 4096
 #define MINIGAME_AUDIO_QUEUE_SIZE 4
@@ -26,13 +27,24 @@
 const char* openal_err2str(ALenum err);
 void openal_check_error(const char* stmt, const char* file, unsigned int line);
 
+struct AudioPlayer;
 
-struct AudioInstance {
+enum class AudioCommand {
+
+  INIT,
+  PLAY,
+  PAUSE
+
+};
+
+struct AudioInstance : std::enable_shared_from_this<AudioInstance> {
 
   ALuint source;
   std::array<ALuint, MINIGAME_AUDIO_QUEUE_SIZE> buffers;
   std::weak_ptr<asset_t> asset;
+  std::weak_ptr<AudioPlayer> audio_player;
   ALsizei readed_bytes = 0;
+  bool is_playing = false;
   bool is_end_of_stream = false;
 
   ~AudioInstance() { deinit(); printf("dtor\n"); }
@@ -41,19 +53,22 @@ struct AudioInstance {
   void deinit();
   void fill_queue_before_play();
   void play();
+  void pause();
+  void push_play_cmd();
+  void push_pause_cmd();
   void update();
 
 };
 
 
-struct AudioPlayer {
+struct AudioPlayer : std::enable_shared_from_this<AudioPlayer> {
 
   std::list<std::shared_ptr<AudioInstance>> instances;
-  ThreadQueue<std::shared_ptr<AudioInstance>> queue;
+  ThreadQueue<std::pair<std::shared_ptr<AudioInstance>, AudioCommand>> queue;
   std::mutex mtx;
   std::atomic<bool> is_close = false;
 
-  void thread_for_init();
+  void thread_for_command();
   void thread_for_stream();
 
   std::shared_ptr<AudioInstance> play(std::weak_ptr<asset_t> asset);
@@ -152,8 +167,34 @@ void AudioInstance::play()
   AL_CHECK(alSourcePlay(this->source));
 }
 
+void AudioInstance::pause()
+{
+  AL_CHECK(alSourcePause(this->source));
+}
+
+void AudioInstance::push_play_cmd()
+{
+  auto ap = this->audio_player.lock();
+  if (ap) {
+    ap->queue.push(std::make_pair(this->shared_from_this(), AudioCommand::PLAY));
+  }
+}
+
+void AudioInstance::push_pause_cmd()
+{
+  auto ap = this->audio_player.lock();
+  if (ap) {
+    ap->queue.push(std::make_pair(this->shared_from_this(), AudioCommand::PAUSE));
+  }
+}
+
 void AudioInstance::update()
 {
+  ALint state;
+  AL_CHECK(alGetSourcei(this->source, AL_SOURCE_STATE, &state));
+
+  if (state == AL_PAUSED) { return; }
+
   auto sp_asset = this->asset.lock();
   DEBUG_ASSERT(sp_asset, assert_handler{});
 
@@ -186,28 +227,44 @@ void AudioInstance::update()
     this->readed_bytes += size;
   }
 
-  ALint state;
   AL_CHECK(alGetSourcei(this->source, AL_SOURCE_STATE, &state));
 
   if (state == AL_STOPPED) { this->is_end_of_stream = true; }
 }
 
-void AudioPlayer::thread_for_init()
+void AudioPlayer::thread_for_command()
 {
   for (;;) {
-    std::optional<std::shared_ptr<AudioInstance>> opt = this->queue.pop();
+    std::optional<std::pair<std::shared_ptr<AudioInstance>, AudioCommand>> opt = this->queue.pop();
 
     if (!opt) { break; }
 
-    std::shared_ptr<AudioInstance> ai = opt.value();
-
-    ai->init();
-    ai->fill_queue_before_play();
-    ai->play();
-
     std::lock_guard<std::mutex> lk(this->mtx);
 
-    this->instances.push_back(ai);
+    std::shared_ptr<AudioInstance> ai = opt.value().first;
+
+    AudioCommand cmd = opt.value().second;
+
+    switch (cmd) {
+      case AudioCommand::INIT:
+        ai->init();
+        ai->fill_queue_before_play();
+        ai->play();
+        this->instances.push_back(ai);
+        break;
+
+      case AudioCommand::PLAY:
+        ai->play();
+        break;
+
+      case AudioCommand::PAUSE:
+        ai->pause();
+        break;
+
+      default:
+        DEBUG_UNREACHABLE(assert_handler{});
+    }
+
   }
 }
 
@@ -222,7 +279,11 @@ void AudioPlayer::thread_for_stream()
       ai->update();
     }
 
-    this->instances.remove_if([](std::shared_ptr<AudioInstance> n) { return n->is_end_of_stream; });
+    this->instances.remove_if(
+      [](std::shared_ptr<AudioInstance> n) {
+        return n.use_count() == 2 && n->is_end_of_stream;
+      }
+    );
   }
 }
 
@@ -232,8 +293,9 @@ std::shared_ptr<AudioInstance> AudioPlayer::play(std::weak_ptr<asset_t> asset)
 
   ai = std::make_shared<AudioInstance>();
   ai->asset = asset;
+  ai->audio_player = this->weak_from_this();
 
-  this->queue.push(ai);
+  this->queue.push(std::make_pair(ai, AudioCommand::INIT));
 
   return ai;
 }
