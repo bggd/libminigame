@@ -139,7 +139,7 @@ void AudioInstance::fill_queue_before_play()
     }
 
     uint8_t* data = (uint8_t*)audio.data;
-    AL_CHECK(alBufferData(this->buffers[i], AL_FORMAT_STEREO16, data+this->readed_bytes, size, 44100));
+    AL_CHECK(alBufferData(this->buffers[i], format, data+this->readed_bytes, size, 44100));
 
     AL_CHECK(alSourceQueueBuffers(this->source, 1, &this->buffers[i]));
 
@@ -179,7 +179,7 @@ void AudioInstance::update()
     }
 
     uint8_t* data = (uint8_t*)audio.data;
-    AL_CHECK(alBufferData(buf, AL_FORMAT_STEREO16, data+this->readed_bytes, size, 44100));
+    AL_CHECK(alBufferData(buf, format, data+this->readed_bytes, size, 44100));
 
     AL_CHECK(alSourceQueueBuffers(this->source, 1, &buf));
 
