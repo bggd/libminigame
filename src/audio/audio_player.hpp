@@ -13,6 +13,8 @@
 #include <optional>
 #include <array>
 #include <utility>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define MINIGAME_AUDIO_BUFFER_SIZE 4096
 #define MINIGAME_AUDIO_QUEUE_SIZE 4
@@ -24,8 +26,8 @@
   } while (0);
 
 
-const char* openal_err2str(ALenum err);
-void openal_check_error(const char* stmt, const char* file, unsigned int line);
+const char* openal_err2str(ALenum err) noexcept;
+void openal_check_error(const char* stmt, const char* file, unsigned int line) noexcept;
 
 struct AudioPlayer;
 
@@ -48,16 +50,16 @@ struct AudioInstance : std::enable_shared_from_this<AudioInstance> {
   bool is_playing = false;
   bool is_end_of_stream = false;
 
-  ~AudioInstance() { deinit(); printf("dtor\n"); }
+  ~AudioInstance() noexcept { this->deinit(); }
 
-  void init();
-  void deinit();
-  void fill_queue_before_play();
-  void play();
-  void pause();
-  void push_play_cmd();
-  void push_pause_cmd();
-  void update();
+  void init() noexcept;
+  void deinit() const noexcept;
+  void fill_queue_before_play() noexcept;
+  void play() noexcept;
+  void pause() noexcept;
+  void push_play_cmd() noexcept;
+  void push_pause_cmd() noexcept;
+  void update() noexcept;
 
 };
 
@@ -69,15 +71,15 @@ struct AudioPlayer : std::enable_shared_from_this<AudioPlayer> {
   std::mutex mtx;
   std::atomic<bool> is_close = false;
 
-  void thread_for_command();
-  void thread_for_stream();
+  void thread_for_command() noexcept;
+  void thread_for_update() noexcept;
 
-  std::shared_ptr<AudioInstance> play(std::weak_ptr<asset_t> asset, bool loop=false);
+  std::shared_ptr<AudioInstance> play(std::weak_ptr<asset_t> asset, bool loop=false) noexcept;
 
 };
 
 
-const char* openal_err2str(ALenum err)
+const char* openal_err2str(ALenum err) noexcept
 {
   switch (err) {
     case AL_NO_ERROR: return "AL_NO_ERROR";
@@ -90,7 +92,7 @@ const char* openal_err2str(ALenum err)
   return "";
 }
 
-void openal_check_error(const char* stmt, const char* file, unsigned int line)
+void openal_check_error(const char* stmt, const char* file, unsigned int line) noexcept
 {
   struct al_assert_handler : debug_assert::default_handler, debug_assert::set_level<-1> {
 
@@ -100,9 +102,15 @@ void openal_check_error(const char* stmt, const char* file, unsigned int line)
       loc.file_name = file;
       loc.line_number = line;
 
-      std::string str = std::string(stmt) + " " + std::string(err_msg);
+      try {
+        std::string str = std::string(stmt) + " " + std::string(err_msg);
 
-      debug_assert::default_handler::handle(loc, str.data());
+        debug_assert::default_handler::handle(loc, str.data());
+      }
+      catch (const std::exception& e) {
+        fprintf(stderr, "%s\n", e.what());
+        abort();
+      }
     }
 
   };
@@ -112,14 +120,14 @@ void openal_check_error(const char* stmt, const char* file, unsigned int line)
   DEBUG_ASSERT(err == AL_NO_ERROR, al_assert_handler{}, openal_err2str(err), stmt, file, line);
 }
 
-void AudioInstance::init()
+void AudioInstance::init() noexcept
 {
   AL_CHECK(alGenSources(1, &this->source));
 
   AL_CHECK(alGenBuffers(MINIGAME_AUDIO_QUEUE_SIZE, this->buffers.data()));
 }
 
-void AudioInstance::deinit()
+void AudioInstance::deinit() const noexcept
 {
   AL_CHECK(alSourceStop(this->source));
 
@@ -134,12 +142,20 @@ void AudioInstance::deinit()
   AL_CHECK(alDeleteSources(1, &this->source));
 }
 
-void AudioInstance::fill_queue_before_play()
+void AudioInstance::fill_queue_before_play() noexcept
 {
   auto sp_asset = this->asset.lock();
   DEBUG_ASSERT(sp_asset, assert_handler{});
 
-  AssetAudio audio = std::get<AssetAudio>(*sp_asset);
+  AssetAudio audio;
+  
+  try {
+    audio = std::get<AssetAudio>(*sp_asset);
+  }
+  catch (const std::bad_variant_access& e) {
+    fprintf(stderr, "%s\n", e.what());
+    abort();
+  }
 
   ALenum format = (audio.format == AssetAudio::Format::MONO_SHORT16) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 
@@ -163,33 +179,41 @@ void AudioInstance::fill_queue_before_play()
   }
 }
 
-void AudioInstance::play()
+void AudioInstance::play() noexcept
 {
   AL_CHECK(alSourcePlay(this->source));
+  this->is_playing = true;
 }
 
-void AudioInstance::pause()
+void AudioInstance::pause() noexcept
 {
   AL_CHECK(alSourcePause(this->source));
+  this->is_playing = false;
 }
 
-void AudioInstance::push_play_cmd()
+void AudioInstance::push_play_cmd() noexcept
 {
+  DEBUG_ASSERT(!this->audio_player.expired(), assert_handler{});
+
   auto ap = this->audio_player.lock();
+
   if (ap) {
     ap->queue.push(std::make_pair(this->shared_from_this(), AudioCommand::PLAY));
   }
 }
 
-void AudioInstance::push_pause_cmd()
+void AudioInstance::push_pause_cmd() noexcept
 {
+  DEBUG_ASSERT(!this->audio_player.expired(), assert_handler{});
+
   auto ap = this->audio_player.lock();
+
   if (ap) {
     ap->queue.push(std::make_pair(this->shared_from_this(), AudioCommand::PAUSE));
   }
 }
 
-void AudioInstance::update()
+void AudioInstance::update() noexcept
 {
   ALint state;
   AL_CHECK(alGetSourcei(this->source, AL_SOURCE_STATE, &state));
@@ -199,7 +223,15 @@ void AudioInstance::update()
   auto sp_asset = this->asset.lock();
   DEBUG_ASSERT(sp_asset, assert_handler{});
 
-  AssetAudio audio = std::get<AssetAudio>(*sp_asset);
+  AssetAudio audio;
+  
+  try {
+    audio = std::get<AssetAudio>(*sp_asset);
+  }
+  catch (const std::bad_variant_access& e) {
+    fprintf(stderr, "%s\n", e.what());
+    abort();
+  }
 
   ALenum format = (audio.format == AssetAudio::Format::MONO_SHORT16) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
 
@@ -237,66 +269,84 @@ void AudioInstance::update()
   if (state == AL_STOPPED) { this->is_end_of_stream = true; }
 }
 
-void AudioPlayer::thread_for_command()
+void AudioPlayer::thread_for_command() noexcept
 {
-  for (;;) {
-    std::optional<std::pair<std::shared_ptr<AudioInstance>, AudioCommand>> opt = this->queue.pop();
+  try {
+    for (;;) {
+      std::optional<std::pair<std::shared_ptr<AudioInstance>, AudioCommand>> opt = this->queue.pop();
 
-    if (!opt) { break; }
+      if (!opt) { break; }
 
-    std::lock_guard<std::mutex> lk(this->mtx);
+      std::lock_guard<std::mutex> lk(this->mtx);
 
-    std::shared_ptr<AudioInstance> ai = opt.value().first;
+      std::shared_ptr<AudioInstance> ai = opt.value().first;
 
-    AudioCommand cmd = opt.value().second;
+      AudioCommand cmd = opt.value().second;
 
-    switch (cmd) {
-      case AudioCommand::INIT:
-        ai->init();
-        ai->fill_queue_before_play();
-        ai->play();
-        this->instances.push_back(ai);
-        break;
+      switch (cmd) {
+        case AudioCommand::INIT:
+          ai->init();
+          ai->fill_queue_before_play();
+          ai->play();
+          this->instances.push_back(ai);
+          break;
 
-      case AudioCommand::PLAY:
-        ai->play();
-        break;
+        case AudioCommand::PLAY:
+          ai->play();
+          break;
 
-      case AudioCommand::PAUSE:
-        ai->pause();
-        break;
+        case AudioCommand::PAUSE:
+          ai->pause();
+          break;
 
-      default:
-        DEBUG_UNREACHABLE(assert_handler{});
-    }
-
-  }
-}
-
-void AudioPlayer::thread_for_stream()
-{
-  while (!this->is_close) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
-
-    std::lock_guard<std::mutex> lk(this->mtx);
-
-    for (std::shared_ptr<AudioInstance> ai : this->instances) {
-      ai->update();
-    }
-
-    this->instances.remove_if(
-      [](std::shared_ptr<AudioInstance> n) {
-        return n.use_count() == 2 && n->is_end_of_stream;
+        default:
+          DEBUG_UNREACHABLE(assert_handler{});
       }
-    );
+    }
+  }
+  catch (const std::exception& e) {
+    fprintf(stderr, "%s\n", e.what());
+    abort();
   }
 }
 
-std::shared_ptr<AudioInstance> AudioPlayer::play(std::weak_ptr<asset_t> asset, bool loop)
+void AudioPlayer::thread_for_update() noexcept
+{
+  try {
+    while (!this->is_close) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+      std::lock_guard<std::mutex> lk(this->mtx);
+
+      for (std::shared_ptr<AudioInstance> ai : this->instances) {
+        ai->update();
+      }
+
+      this->instances.remove_if(
+        [](std::shared_ptr<AudioInstance> n) {
+          return n.use_count() == 2 && (n->is_end_of_stream || !n->is_playing);
+        }
+      );
+    }
+  }
+  catch (const std::exception& e) {
+    fprintf(stderr, "%s\n", e.what());
+    abort();
+  }
+}
+
+std::shared_ptr<AudioInstance> AudioPlayer::play(std::weak_ptr<asset_t> asset, bool loop) noexcept
 {
   std::shared_ptr<AudioInstance> ai;
 
-  ai = std::make_shared<AudioInstance>();
+  try {
+    ai = std::make_shared<AudioInstance>();
+  }
+  catch (const std::exception& e) {
+    fprintf(stderr, "%s\n", e.what());
+    abort();
+  }
+
   ai->asset = asset;
   ai->audio_player = this->weak_from_this();
   ai->is_loop = loop;
