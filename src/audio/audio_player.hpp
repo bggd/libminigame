@@ -44,6 +44,7 @@ struct AudioInstance : std::enable_shared_from_this<AudioInstance> {
   std::weak_ptr<asset_t> asset;
   std::weak_ptr<AudioPlayer> audio_player;
   ALsizei readed_bytes = 0;
+  bool is_loop = false;
   bool is_playing = false;
   bool is_end_of_stream = false;
 
@@ -71,7 +72,7 @@ struct AudioPlayer : std::enable_shared_from_this<AudioPlayer> {
   void thread_for_command();
   void thread_for_stream();
 
-  std::shared_ptr<AudioInstance> play(std::weak_ptr<asset_t> asset);
+  std::shared_ptr<AudioInstance> play(std::weak_ptr<asset_t> asset, bool loop=false);
 
 };
 
@@ -208,7 +209,11 @@ void AudioInstance::update()
   AL_CHECK(alGetSourcei(this->source, AL_BUFFERS_PROCESSED, &num_queue));
 
   for (int i = 0; i < num_queue; ++i) {
-    if (this->readed_bytes == length) { break; }
+    if (this->readed_bytes == length && !this->is_loop) { break; }
+
+    if (this->readed_bytes == length && this->is_loop) {
+      this->readed_bytes = 0;
+    }
 
     ALuint buf;
     AL_CHECK(alSourceUnqueueBuffers(this->source, 1, &buf));
@@ -287,13 +292,14 @@ void AudioPlayer::thread_for_stream()
   }
 }
 
-std::shared_ptr<AudioInstance> AudioPlayer::play(std::weak_ptr<asset_t> asset)
+std::shared_ptr<AudioInstance> AudioPlayer::play(std::weak_ptr<asset_t> asset, bool loop)
 {
   std::shared_ptr<AudioInstance> ai;
 
   ai = std::make_shared<AudioInstance>();
   ai->asset = asset;
   ai->audio_player = this->weak_from_this();
+  ai->is_loop = loop;
 
   this->queue.push(std::make_pair(ai, AudioCommand::INIT));
 

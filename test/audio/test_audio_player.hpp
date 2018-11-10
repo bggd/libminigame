@@ -54,7 +54,7 @@ void test_audio_player()
     std::thread th_cmd(&decltype(player)::thread_for_command, &player);
     std::thread th_stream(&decltype(player)::thread_for_stream, &player);
 
-    auto i = player.play(al.get("Upbeat Loop.ogg").value());
+    auto i = player.play(al.get("Upbeat Loop.ogg").value(), true);
     i->push_pause_cmd();
     i->push_play_cmd();
 
