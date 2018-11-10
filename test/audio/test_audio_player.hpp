@@ -49,22 +49,24 @@ void test_audio_player()
   }
 
   {
-    AudioPlayer player;
+    std::shared_ptr<AudioPlayer> player = std::make_shared<AudioPlayer>();
 
-    std::thread th_cmd(&decltype(player)::thread_for_command, &player);
-    std::thread th_stream(&decltype(player)::thread_for_stream, &player);
+    std::thread th_cmd(&AudioPlayer::thread_for_command, player.get());
+    std::thread th_update(&AudioPlayer::thread_for_update, player.get());
 
-    auto i = player.play(al.get("Upbeat Loop.ogg").value(), true);
+    auto i = player->play(al.get("Upbeat Loop.ogg").value(), true);
     i->push_pause_cmd();
     i->push_play_cmd();
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
-    player.queue.close();
-    player.is_close = true;
+    i->push_pause_cmd();
+
+    player->queue.close();
+    player->is_close = true;
 
     th_cmd.join();
-    th_stream.join();
+    th_update.join();
   }
 
   deinit_openal();
