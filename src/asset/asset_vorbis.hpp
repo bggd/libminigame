@@ -5,7 +5,7 @@
 #include "../third_party/debug_assert.hpp"
 
 
-struct AssetAudioVorbis  : AssetAudio {
+struct AssetAudioVorbis : AssetAudio {
 
   void load_from_memory(uint8_t* file_data, size_t file_length) noexcept final
   {
