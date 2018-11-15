@@ -1,11 +1,20 @@
 #ifndef MINIGAME_SRC_ASSET_ASSET_HPP_INCLUDED
 #define MINIGAME_SRC_ASSET_ASSET_HPP_INCLUDED
 
+#include "../third_party/debug_assert.hpp"
+
 #include <variant>
 #include <stdint.h>
 
 
-struct AssetImage {
+struct AssetBase {
+
+  virtual void load_from_memory(uint8_t*, size_t) noexcept = 0;
+  virtual void unload() noexcept = 0;
+
+};
+
+struct AssetImage : AssetBase {
 
   enum class PixelFormat {
     GREY,
@@ -19,10 +28,12 @@ struct AssetImage {
   uint16_t height;
   uint8_t* data;
 
+  virtual void load_from_memory(uint8_t*, size_t) noexcept override { DEBUG_UNREACHABLE(assert_handler{}); }
+  virtual void unload() noexcept override { DEBUG_UNREACHABLE(assert_handler{}); }
 
 };
 
-struct AssetAudio {
+struct AssetAudio : AssetBase {
 
   enum class Format {
     STEREO_SHORT16,
@@ -33,19 +44,15 @@ struct AssetAudio {
   uint32_t  length;
   int16_t* data;
 
-};
-
-struct AssetImageTGA {};
-struct AssetAudioVorbis {};
-
-struct AssetLoadedFileData {
-
-  uint8_t* data;
-  size_t length;
+  virtual void load_from_memory(uint8_t*, size_t) noexcept override { DEBUG_UNREACHABLE(assert_handler{}); }
+  virtual void unload() noexcept override { /*DEBUG_UNREACHABLE(assert_handler{});*/ }
 
 };
 
-using asset_t = std::variant<AssetImage, AssetAudio>;
-using asset_specific_t = std::variant<AssetLoadedFileData, AssetImageTGA, AssetAudioVorbis>;
+#include "asset_tga.hpp"
+#include "asset_vorbis.hpp"
+
+using asset_t = std::variant<AssetImageTGA, AssetAudioVorbis>;
+using asset_audio_t = std::variant<AssetAudioVorbis>;
 
 #endif // MINIGAME_SRC_ASSET_ASSET_HPP_INCLUDED

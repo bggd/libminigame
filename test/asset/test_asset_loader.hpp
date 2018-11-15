@@ -5,17 +5,21 @@
 
 #include "../../src/asset/asset.hpp"
 #include "../../src/asset/asset_loader.hpp"
-#include "../../src/asset/decoder.hpp"
 
 #include <variant>
 #include <thread>
 #include <chrono>
+#include <type_traits>
 #include <stdint.h>
 
+static_assert(std::is_nothrow_move_constructible<std::optional<AssetLoader::AssetFile>>::value);
+static_assert(std::is_nothrow_move_assignable<std::optional<AssetLoader::AssetFile>>::value);
+static_assert(std::is_nothrow_move_constructible<std::optional<asset_t>>::value);
+static_assert(std::is_nothrow_move_assignable<std::optional<asset_t>>::value);
 
 void test_asset_loader()
 {
-  AssetLoader<asset_t, asset_specific_t, DecodeVisitor<asset_t>> al;
+  AssetLoader al;
   al.load("circle.tga", AssetImageTGA{});
   al.load("Upbeat Loop.ogg", AssetAudioVorbis{});
 
@@ -26,7 +30,7 @@ void test_asset_loader()
   std::thread th_decode(&decltype(al)::thread_for_decode_buffer, &al);
 
   while (!al.is_complete()) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 
   BOOST_TEST(al.is_complete());

@@ -38,7 +38,7 @@ void test_audio_player()
 {
   BOOST_TEST(init_openal());
 
-  AssetLoader<asset_t, asset_specific_t, DecodeVisitor<asset_t>> al;
+  AssetLoader al;
   al.load("Upbeat Loop.ogg", AssetAudioVorbis{});
 
   std::thread th_load(&decltype(al)::thread_for_load_file, &al);
