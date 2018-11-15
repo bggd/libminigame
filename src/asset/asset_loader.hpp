@@ -135,7 +135,6 @@ void AssetLoader::load(std::string_view path, asset_t asset) noexcept
 
 bool AssetLoader::is_complete() const noexcept
 {
-  DEBUG_ASSERT(this->task_count >= 0, assert_handler{});
   return this->task_count == 0;
 }
 

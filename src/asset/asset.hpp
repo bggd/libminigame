@@ -9,6 +9,7 @@
 
 struct AssetBase {
 
+  virtual ~AssetBase() {}
   virtual void load_from_memory(uint8_t*, size_t) noexcept = 0;
   virtual void unload() noexcept = 0;
 
