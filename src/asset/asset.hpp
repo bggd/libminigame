@@ -42,11 +42,9 @@ struct AssetAudio : AssetBase {
   };
 
   Format format;
-  uint32_t  length;
-  int16_t* data;
 
   virtual void load_from_memory(uint8_t*, size_t) noexcept override { DEBUG_UNREACHABLE(assert_handler{}); }
-  virtual void unload() noexcept override { /*DEBUG_UNREACHABLE(assert_handler{});*/ }
+  virtual void unload() noexcept override { DEBUG_UNREACHABLE(assert_handler{}); }
 
 };
 
