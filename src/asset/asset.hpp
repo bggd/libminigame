@@ -37,8 +37,8 @@ struct AssetImage : AssetBase {
 struct AssetAudio : AssetBase {
 
   enum class Format {
-    STEREO_SHORT16,
-    MONO_SHORT16
+    MONO_SHORT16,
+    STEREO_SHORT16
   };
 
   Format format;
