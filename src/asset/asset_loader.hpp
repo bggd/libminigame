@@ -12,6 +12,7 @@
 #include <memory>
 #include <fstream>
 #include <mutex>
+#include <limits>
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
