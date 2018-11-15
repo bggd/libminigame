@@ -71,7 +71,7 @@ void AssetLoader::thread_for_load_file() noexcept
       af.data = buf;
       af.length = file_len;
 
-      this->queue_decode.push(af);
+      this->queue_decode.emplace(std::move(af));
     }
     else {
       fprintf(stderr, "couldn't read file: %s\n", af.path.data());
@@ -90,7 +90,7 @@ void AssetLoader::thread_for_decode_buffer() noexcept
       break;
     }
 
-    AssetFile af = *opt;
+    AssetFile af = std::move(*opt);
 
     AssetBase* ap = std::visit([](auto x) {
       try { return static_cast<AssetBase*>(new decltype(x)); }
@@ -130,7 +130,7 @@ void AssetLoader::load(std::string_view path, asset_t asset) noexcept
   DEBUG_ASSERT(this->task_count < std::numeric_limits<uint32_t>::max(), assert_handler{});
   this->task_count++;
 
-  this->queue_load.push(af);
+  this->queue_load.emplace(std::move(af));
 }
 
 bool AssetLoader::is_complete() const noexcept

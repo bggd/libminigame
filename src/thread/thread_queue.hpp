@@ -7,6 +7,7 @@
 #include <condition_variable>
 #include <queue>
 #include <optional>
+#include <utility>
 #include <stdio.h>
 
 
@@ -21,6 +22,7 @@ struct ThreadQueue {
   bool is_empty() noexcept;
   void close() noexcept;
   void push(T v) noexcept;
+  void emplace(T&& v) noexcept;
   std::optional<T> pop() noexcept;
 
 };
@@ -52,6 +54,21 @@ void ThreadQueue<T>::push(T v) noexcept
     std::lock_guard<std::mutex> lk(this->mtx);
 
     this->queue.push(v);
+  }
+  catch (const std::exception& e) {
+    fprintf(stderr, "%s\n", e.what());
+    abort();
+  }
+  this->cv.notify_one();
+}
+
+template <typename T>
+void ThreadQueue<T>::emplace(T&& v) noexcept
+{
+  try {
+    std::lock_guard<std::mutex> lk(this->mtx);
+
+    this->queue.emplace(std::forward<T>(v));
   }
   catch (const std::exception& e) {
     fprintf(stderr, "%s\n", e.what());
