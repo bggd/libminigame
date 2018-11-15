@@ -80,7 +80,7 @@ struct AssetAudioVorbis : AssetAudio {
 
       stb_vorbis_close(this->vorbis);
 
-      delete [] this->data_for_vorbis;
+      delete[] this->data_for_vorbis;
     }
   }
 
