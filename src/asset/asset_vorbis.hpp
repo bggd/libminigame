@@ -87,10 +87,10 @@ struct AssetAudioVorbis : AssetAudio {
     DEBUG_ASSERT(num_elem < std::numeric_limits<int>::max(), assert_handler{});
 
     stb_vorbis_info vi = stb_vorbis_get_info(this->vorbis);
-    int len = 0;
+    size_t len = 0;
 
     while (len < num_elem) {
-      int n = stb_vorbis_get_samples_short_interleaved(this->vorbis, vi.channels, data+len, (int)num_elem-len);
+      int n = stb_vorbis_get_samples_short_interleaved(this->vorbis, vi.channels, data+len, static_cast<int>(num_elem-len));
 
       int err = stb_vorbis_get_error(this->vorbis);
       DEBUG_ASSERT(err == VORBIS__no_error || err == VORBIS_need_more_data, assert_handler{});
