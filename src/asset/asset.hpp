@@ -4,13 +4,14 @@
 #include "../third_party/debug_assert.hpp"
 
 #include <variant>
+#include <array>
 #include <stdint.h>
 
 
 struct AssetBase {
 
   virtual ~AssetBase() {}
-  virtual void load_from_memory(uint8_t*, size_t) noexcept = 0;
+  virtual void load_from_memory(uint8_t* file_data, size_t file_length) noexcept = 0;
   virtual void unload() noexcept = 0;
 
 };
@@ -42,10 +43,14 @@ struct AssetAudio : AssetBase {
   };
 
   Format format;
-  bool is_static;
+  bool is_static = true;
+  int16_t* raw_samples;
+  int32_t num_samples;
 
   virtual void load_from_memory(uint8_t*, size_t) noexcept = 0;
   virtual void unload() noexcept = 0;
+  virtual size_t decode(int16_t* data, size_t num_elem) noexcept = 0;
+  virtual void rewind() noexcept = 0;
 
 };
 

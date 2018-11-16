@@ -10,9 +10,6 @@
 
 struct AssetAudioVorbis : AssetAudio {
 
-  bool is_static = true;
-  size_t length = 0;
-  int16_t* raw_samples = nullptr;
   stb_vorbis* vorbis = nullptr;
   uint8_t* data_for_vorbis = nullptr;
 
@@ -40,7 +37,7 @@ struct AssetAudioVorbis : AssetAudio {
         this->format = AssetAudio::Format::STEREO_SHORT16;
       }
 
-      this->length = data_len;
+      this->num_samples = data_len;
 
       delete[] file_data;
     }
@@ -82,6 +79,37 @@ struct AssetAudioVorbis : AssetAudio {
 
       delete[] this->data_for_vorbis;
     }
+  }
+
+  size_t decode(int16_t* data, size_t num_elem) noexcept
+  {
+    DEBUG_ASSERT(this->is_static == false, assert_handler{});
+    DEBUG_ASSERT(num_elem < std::numeric_limits<int>::max(), assert_handler{});
+
+    stb_vorbis_info vi = stb_vorbis_get_info(this->vorbis);
+    int len = 0;
+
+    while (len < num_elem) {
+      int n = stb_vorbis_get_samples_short_interleaved(this->vorbis, vi.channels, data+len, (int)num_elem-len);
+
+      int err = stb_vorbis_get_error(this->vorbis);
+      DEBUG_ASSERT(err == VORBIS__no_error || err == VORBIS_need_more_data, assert_handler{});
+
+      if (n == 0) { break; }
+      len += n * vi.channels;
+    }
+
+    return len;
+  }
+
+  void rewind() noexcept
+  {
+    DEBUG_ASSERT(this->is_static == false, assert_handler{});
+
+    stb_vorbis_seek_start(this->vorbis);
+
+    int err = stb_vorbis_get_error(this->vorbis);
+    DEBUG_ASSERT(err == VORBIS__no_error || err == VORBIS_need_more_data, assert_handler{});
   }
 
 };
