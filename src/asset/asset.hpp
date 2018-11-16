@@ -29,8 +29,8 @@ struct AssetImage : AssetBase {
   uint16_t height;
   uint8_t* data;
 
-  virtual void load_from_memory(uint8_t*, size_t) noexcept override { DEBUG_UNREACHABLE(assert_handler{}); }
-  virtual void unload() noexcept override { DEBUG_UNREACHABLE(assert_handler{}); }
+  virtual void load_from_memory(uint8_t*, size_t) noexcept = 0;
+  virtual void unload() noexcept = 0;
 
 };
 
@@ -42,9 +42,10 @@ struct AssetAudio : AssetBase {
   };
 
   Format format;
+  bool is_static;
 
-  virtual void load_from_memory(uint8_t*, size_t) noexcept override { DEBUG_UNREACHABLE(assert_handler{}); }
-  virtual void unload() noexcept override { DEBUG_UNREACHABLE(assert_handler{}); }
+  virtual void load_from_memory(uint8_t*, size_t) noexcept = 0;
+  virtual void unload() noexcept = 0;
 
 };
 
