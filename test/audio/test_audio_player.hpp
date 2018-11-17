@@ -64,6 +64,7 @@ void test_audio_player()
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     ai->rewind();
     ai->play();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     player->is_close = true;
 

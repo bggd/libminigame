@@ -42,6 +42,7 @@ struct AudioInstance : std::enable_shared_from_this<AudioInstance> {
   ALsizei readed_samples = 0;
   bool is_initialized = false;
   bool is_loop = false;
+  bool is_end_of_stream = false;
   AudioInstance::State state;
   std::atomic<bool> is_playing = false;
   std::atomic<bool> request_rewind = false;
@@ -174,9 +175,10 @@ void AudioInstance::fill_queue(ALuint id) noexcept
       n = audio->num_samples - this->readed_samples;
     }
 
-    ALsizei size = sizeof(int16_t) * n;
+    ALsizei size = sizeof(int16_t) * n * ((audio->format == AssetAudio::Format::MONO_SHORT16) ? 1 : 2);
+    ALsizei pos = sizeof(int16_t) * this->readed_samples;
 
-    AL_CHECK(alBufferData(id, format, &audio->raw_samples[this->readed_samples], size, 44100));
+    AL_CHECK(alBufferData(id, format, audio->raw_samples + pos, size, 44100));
 
     AL_CHECK(alSourceQueueBuffers(this->source, 1, &id));
 
@@ -213,6 +215,14 @@ void AudioInstance::fill_queue_before_play() noexcept
 
 void AudioInstance::update() noexcept
 {
+  if (!this->is_loop) {
+    ALint source_state;
+    AL_CHECK(alGetSourcei(this->source, AL_SOURCE_STATE, &source_state));
+
+    if (source_state == AL_STOPPED) { this->is_end_of_stream = true; }
+  }
+
+
   if (this->request_rewind) {
     this->unqueue_buffers();
 
@@ -282,6 +292,10 @@ void AudioPlayer::thread_for_update() noexcept
       if (!ai->is_initialized) { ai->init(); ai->fill_queue_before_play(); }
       ai->update();
     }
+
+    this->instances.remove_if([](std::shared_ptr<AudioInstance> i) {
+      return i.use_count() == 2 && i->is_end_of_stream;
+    });
   }
 }
 
