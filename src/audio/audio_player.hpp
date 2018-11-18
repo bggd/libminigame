@@ -29,7 +29,7 @@
 const char* openal_err2str(ALenum err) noexcept;
 void openal_check_error(const char* stmt, const char* file, unsigned int line) noexcept;
 
-struct AudioInstance : std::enable_shared_from_this<AudioInstance> {
+struct AudioInstance {
 
   enum class State {
     PLAY,
@@ -61,7 +61,7 @@ struct AudioInstance : std::enable_shared_from_this<AudioInstance> {
 };
 
 
-struct AudioPlayer : std::enable_shared_from_this<AudioPlayer> {
+struct AudioPlayer {
 
   std::list<std::shared_ptr<AudioInstance>> instances;
   ThreadQueue<std::shared_ptr<AudioInstance>> queue;
