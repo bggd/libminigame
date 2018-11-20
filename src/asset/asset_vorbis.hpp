@@ -13,7 +13,7 @@ struct AssetAudioVorbis : AssetAudio {
   stb_vorbis* vorbis = nullptr;
   uint8_t* data_for_vorbis = nullptr;
 
-  void load_from_memory(uint8_t* file_data, size_t file_length) noexcept final
+  void load_from_memory(uint8_t* file_data, size_t file_length) noexcept override
   {
     DEBUG_ASSERT(file_length <= std::numeric_limits<int>::max(), assert_handler{});
 
@@ -64,7 +64,7 @@ struct AssetAudioVorbis : AssetAudio {
     }
   }
 
-  void unload() noexcept final
+  void unload() noexcept override
   {
     if (this->is_static) {
       DEBUG_ASSERT(this->raw_samples, assert_handler{});
@@ -81,7 +81,7 @@ struct AssetAudioVorbis : AssetAudio {
     }
   }
 
-  size_t decode(int16_t* data, size_t num_elem) noexcept
+  size_t decode(int16_t* data, size_t num_elem) noexcept override
   {
     DEBUG_ASSERT(this->is_static == false, assert_handler{});
     DEBUG_ASSERT(num_elem < std::numeric_limits<int>::max(), assert_handler{});
@@ -102,7 +102,7 @@ struct AssetAudioVorbis : AssetAudio {
     return len;
   }
 
-  void rewind() noexcept
+  void rewind() noexcept override
   {
     DEBUG_ASSERT(this->is_static == false, assert_handler{});
 
