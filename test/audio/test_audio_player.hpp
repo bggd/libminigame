@@ -52,11 +52,11 @@ void test_audio_player()
   }
 
   {
-    std::shared_ptr<AudioPlayer> player = std::make_shared<AudioPlayer>();
+    AudioPlayer player;
 
-    std::thread th_update(&AudioPlayer::thread_for_update, player.get());
+    std::thread th_update(&AudioPlayer::thread_for_update, &player);
 
-    auto ai = player->play(al.get("Upbeat Loop.ogg").value());
+    auto ai = player.play(al.get("Upbeat Loop.ogg").value());
 
     ai->play();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -66,7 +66,7 @@ void test_audio_player()
     ai->play();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    player->is_close = true;
+    player.is_close = true;
 
     th_update.join();
   }
