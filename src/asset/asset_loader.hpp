@@ -127,7 +127,7 @@ void AssetLoader::load(std::string_view path, asset_t asset) noexcept
   AssetFile af;
   af.path = path;
   af.type = std::move(asset);
-  
+
   DEBUG_ASSERT(this->task_count < std::numeric_limits<uint32_t>::max(), assert_handler{});
   this->task_count++;
 

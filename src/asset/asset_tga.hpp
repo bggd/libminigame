@@ -8,7 +8,7 @@
 
 
 struct AssetImageTGA : AssetImage {
-  
+
   void load_from_memory(uint8_t* file_data, size_t file_length) noexcept override
   {
     int x, y, n;
