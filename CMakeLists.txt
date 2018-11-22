@@ -31,9 +31,6 @@ if(BUILD_TESTING)
   )
   target_include_directories(test_libminigame PRIVATE
     third_party/googletest/googletest/include
-    third_party/boost-assert/include
-    third_party/boost-core/include
-    third_party/boost-config/include
     ${OPENAL_INCLUDE_DIR}
   )
   target_link_libraries(test_libminigame PRIVATE ${Libraries})

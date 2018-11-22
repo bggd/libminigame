@@ -2,6 +2,7 @@
 
 #include "thread/test_thread_queue.hpp"
 #include "asset/test_asset_loader.hpp"
+#include "audio/test_audio_player.hpp"
 
 
 int main(int argc, char** argv)
