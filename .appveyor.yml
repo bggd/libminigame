@@ -11,13 +11,12 @@ install:
   - mkdir third_party
   - cd third_party
 
-  - git clone -b boost-1.68.0 --depth=1 https://github.com/boostorg/assert boost-assert
-  - git clone -b boost-1.68.0 --depth=1 https://github.com/boostorg/config boost-config
-  - git clone -b boost-1.68.0 --depth=1 https://github.com/boostorg/core boost-core
   - git clone --depth=1 https://github.com/nothings/stb
   - git clone -b v1.3.3 --depth=1 https://github.com/foonathan/debug_assert
+  - git clone -b release-1.8.1 --depth=1 https://github.com/abseil/googletest
 
   - cd ..
+
   - git clone --depth=1 https://github.com/bggd/test_data
 
   - cmd: vcpkg install openal-soft:x64-windows
@@ -37,7 +36,11 @@ build_script:
   - cmake --build . --config Debug
 
 test_script:
+  - cd ..
+  - cd test_data
+
   - cmd: set ALSOFT_DRIVERS=null
   - sh: export ALSOFT_DRIVERS=null
 
-  - ctest -C Debug --output-on-failure
+  - cmd: ..\build\Debug\test_libminigame.exe
+  - sh: ../build/Debug/test_libminigame

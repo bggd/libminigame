@@ -1,7 +1,7 @@
 #ifndef MINIGAME_TEST_TEST_THREAD_THREAD_QUEUE_HPP_INCLUDED
 #define MINIGAME_TEST_TEST_THREAD_THREAD_QUEUE_HPP_INCLUDED
 
-#include <boost/core/lightweight_test.hpp>
+#include <gtest/gtest.h>
 
 #include "../../src/thread/thread_queue.hpp"
 
@@ -29,13 +29,13 @@ void other_thread_2(ThreadQueue<uint32_t>* queue)
   queue->push(num);
 }
 
-void test_thread_queue()
+TEST(ThreadQueue, Test)
 {
   ThreadQueue<uint32_t> queue;
 
   queue.push(0);
 
-  BOOST_TEST_EQ(queue.pop().value(), 0);
+  ASSERT_TRUE(queue.pop().value() == 0);
 
   std::thread th(other_thread_2, &queue);
   std::thread threads[10];
@@ -47,23 +47,23 @@ void test_thread_queue()
   }
   th.join();
 
-  BOOST_TEST(queue.is_empty() == false);
-  BOOST_TEST_EQ(queue.pop().value(), 49500);
-  BOOST_TEST(queue.is_empty());
+  ASSERT_FALSE(queue.is_empty());
+  ASSERT_TRUE(queue.pop().value() == 49500);
+  ASSERT_TRUE(queue.is_empty());
 
-  BOOST_TEST(queue.is_close == false);
+  ASSERT_FALSE(queue.is_close);
   queue.close();
-  BOOST_TEST(queue.is_close);
+  ASSERT_TRUE(queue.is_close);
   std::optional<uint32_t> opt = queue.pop();
-  BOOST_TEST(opt.has_value() == false);
+  ASSERT_FALSE(opt.has_value());
 
   ThreadQueue<const char*> queue_cstr;
   
   queue_cstr.push("foo.tga");
   queue_cstr.push("bar.wav");
 
-  BOOST_TEST_CSTR_EQ(queue_cstr.pop().value(), "foo.tga");
-  BOOST_TEST_CSTR_EQ(queue_cstr.pop().value(), "bar.wav");
+  ASSERT_STREQ(queue_cstr.pop().value(), "foo.tga");
+  ASSERT_STREQ(queue_cstr.pop().value(), "bar.wav");
 }
 
 #endif // MINIGAME_TEST_TEST_THREAD_THREAD_QUEUE_HPP_INCLUDED

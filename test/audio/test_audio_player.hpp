@@ -1,7 +1,7 @@
 #ifndef MINIGAME_TEST_AUDIO_TEST_AUDIO_PLAYER_HPP_INCLUDED
 #define MINIGAME_TEST_AUDIO_TEST_AUDIO_PLAYER_HPP_INCLUDED
 
-#include <boost/core/lightweight_test.hpp>
+#include <gtest/gtest.h>
 
 #include "../../src/audio/audio_player.hpp"
 
@@ -37,9 +37,9 @@ void deinit_openal()
   alcCloseDevice(g_al_device);
 }
 
-void test_audio_player()
+TEST(AudioPlayer, Test)
 {
-  BOOST_TEST(init_openal());
+  ASSERT_TRUE(init_openal());
 
   AssetLoader al;
   al.load("Upbeat Loop.ogg", AssetAudioVorbis{});

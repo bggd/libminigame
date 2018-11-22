@@ -13,8 +13,10 @@ if(BUILD_TESTING)
 
   add_library(stb_image OBJECT src/third_party/stb_image.c)
   add_library(stb_vorbis OBJECT src/third_party/stb_vorbis.c)
+  add_library(gtest STATIC third_party/googletest/googletest/src/gtest-all.cc)
+  target_include_directories(gtest PRIVATE third_party/googletest/googletest/include third_party/googletest/googletest)
 
-  set(Libraries stb_image stb_vorbis)
+  set(Libraries stb_image stb_vorbis gtest)
   if (CMAKE_CXX_COMPILER_ID STREQUAL GNU)
     find_package(Threads REQUIRED)
     set(Libraries ${Libraries} Threads::Threads)
@@ -28,9 +30,7 @@ if(BUILD_TESTING)
     $<$<CXX_COMPILER_ID:MSVC>: /permissive- /W4 /WX>
   )
   target_include_directories(test_libminigame PRIVATE
-    third_party/boost-assert/include
-    third_party/boost-core/include
-    third_party/boost-config/include
+    third_party/googletest/googletest/include
     ${OPENAL_INCLUDE_DIR}
   )
   target_link_libraries(test_libminigame PRIVATE ${Libraries})

@@ -1,14 +1,12 @@
-#include <boost/core/lightweight_test.hpp>
+#include <gtest/gtest.h>
 
 #include "thread/test_thread_queue.hpp"
 #include "asset/test_asset_loader.hpp"
 #include "audio/test_audio_player.hpp"
 
 
-int main()
+int main(int argc, char** argv)
 {
-  test_thread_queue();
-  test_asset_loader();
-  test_audio_player();
-  return boost::report_errors();
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }
