@@ -51,7 +51,7 @@ void AssetLoader::thread_for_load_file() noexcept
     std::optional<AssetFile> opt = std::move(this->queue_load.pop());
 
     if (!opt) {
-      DEBUG_ASSERT(this->queue_decode.is_close == true, assert_handler{});
+      DEBUG_ASSERT(this->queue_load.is_close == true, assert_handler{});
       break;
     }
 
