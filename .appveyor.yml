@@ -36,11 +36,13 @@ build_script:
   - cmake --build . --config Debug
 
 test_script:
-  - cd ..
-  - cd test_data
+  - cmd:cd ..
+  - cmd:cd test_data
 
   - cmd: set ALSOFT_DRIVERS=null
   - sh: export ALSOFT_DRIVERS=null
 
   - cmd: ..\build\Debug\test_libminigame.exe
-  - sh: ../build/Debug/test_libminigame
+
+  - sh: ctest -C Debug
+  - sh: ls -R ../build
