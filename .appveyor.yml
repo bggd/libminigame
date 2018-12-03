@@ -14,6 +14,7 @@ install:
   - git clone --depth=1 https://github.com/nothings/stb
   - git clone -b v1.3.3 --depth=1 https://github.com/foonathan/debug_assert
   - git clone -b release-1.8.1 --depth=1 https://github.com/abseil/googletest
+  - git clone --depth=1 https://github.com/glfw/glfw
 
   - cd ..
 
@@ -22,7 +23,7 @@ install:
   - cmd: vcpkg install openal-soft:x64-windows
   - cmd: copy C:\tools\vcpkg\installed\x64-windows\bin\OpenAL32.dll test_data
 
-  - sh: sudo apt-get install -y libopenal-dev
+  - sh: sudo apt-get install -y libopenal-dev libglfw3-dev
 
 build_script:
   - mkdir build

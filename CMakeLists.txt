@@ -13,10 +13,11 @@ if(BUILD_TESTING)
 
   add_library(stb_image OBJECT src/third_party/stb_image.c)
   add_library(stb_vorbis OBJECT src/third_party/stb_vorbis.c)
+  add_library(glfw STATIC src/third_party/glfw.c)
   add_library(gtest STATIC third_party/googletest/googletest/src/gtest-all.cc)
   target_include_directories(gtest PRIVATE third_party/googletest/googletest/include third_party/googletest/googletest)
 
-  set(Libraries stb_image stb_vorbis gtest)
+  set(Libraries stb_image stb_vorbis glfw gtest)
   if (CMAKE_CXX_COMPILER_ID STREQUAL GNU)
     find_package(Threads REQUIRED)
     set(Libraries ${Libraries} Threads::Threads)

@@ -1,0 +1,6 @@
+#ifndef MINIGAME_SRC_THIRD_PARTY_GLFW_HPP_INCLUDED
+#define MINIGAME_SRC_THIRD_PARTY_GLFW_HPP_INCLUDED
+
+#include "../../third_party/glfw/include/GLFW/glfw3.h"
+
+#endif // MINIGAME_SRC_THIRD_PARTY_GLFW_HPP_INCLUDED
