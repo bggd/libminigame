@@ -12,7 +12,7 @@ void error_callback(int, const char* description)
   DEBUG_UNREACHABLE(assert_handler{}, description);
 }
 
-TEST(Window, Test)
+void test_window()
 {
   glfwSetErrorCallback(error_callback);
 
@@ -27,6 +27,11 @@ TEST(Window, Test)
   w.close();
 
   glfwTerminate();
+}
+
+TEST(Window, Test)
+{
+  //test_window();
 }
 
 #endif // MINIGAME_TEST_WINDOW_TEST_WINDOW_HPP_INCLUDED
