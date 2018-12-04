@@ -5,6 +5,9 @@
 
 #include "../../src/window/window.hpp"
 #include "../../src/third_party/debug_assert.hpp"
+#include "../../src/third_party/opengl.hpp"
+
+#include <stdio.h>
 
 
 void error_callback(int, const char* description)
@@ -20,10 +23,21 @@ void test_window()
   ASSERT_TRUE(err == GLFW_TRUE);
 
   glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+  glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_OSMESA_CONTEXT_API);
 
   Window w;
 
   w.open();
+
+  ASSERT_TRUE(load_gl());
+
+  printf("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
+  printf("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
+  printf("GL_VERSION: %s\n", glGetString(GL_VERSION));
+  printf("GL_SHADING_LANGUAGE_VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+  glClear(GL_COLOR_BUFFER_BIT);
+
   w.close();
 
   glfwTerminate();
@@ -31,7 +45,7 @@ void test_window()
 
 TEST(Window, Test)
 {
-  //test_window();
+  test_window();
 }
 
 #endif // MINIGAME_TEST_WINDOW_TEST_WINDOW_HPP_INCLUDED

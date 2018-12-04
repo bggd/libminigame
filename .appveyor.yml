@@ -4,8 +4,13 @@ image:
 
 shallow_clone: true
 
+cache:
+  - win_flex_bison-2.5.10.zip
+
 init:
   - cmake --version
+  - cmd: python --version
+  - cmd: python -m pip --version
 
 install:
   - mkdir third_party
@@ -15,6 +20,7 @@ install:
   - git clone -b v1.3.3 --depth=1 https://github.com/foonathan/debug_assert
   - git clone -b release-1.8.1 --depth=1 https://github.com/abseil/googletest
   - git clone --depth=1 https://github.com/glfw/glfw
+  - git clone -b mesa-18.2.6 --depth=1 https://github.com/mesa3d/mesa
 
   - cd ..
 
@@ -23,7 +29,20 @@ install:
   - cmd: vcpkg install openal-soft:x64-windows
   - cmd: copy C:\tools\vcpkg\installed\x64-windows\bin\OpenAL32.dll test_data
 
-  - sh: sudo apt-get install -y libopenal-dev libglfw3-dev
+  - cmd: if not exist win_flex_bison-2.5.10.zip appveyor DownloadFile "https://github.com/lexxmark/winflexbison/releases/download/v.2.5.10/win_flex_bison-2.5.10.zip"
+  - cmd: 7z x -y -owin_flex_bison win_flex_bison-2.5.10.zip > nul
+
+  - cmd: python -m pip install Mako==1.0.7
+  - cmd: python -m pip install pypiwin32
+  - cmd: python -m pip install wheel
+  - cmd: python -m pip install scons==3.0.1
+  - cmd: set PATH=%CD%\winflexbison;%PATH%
+  - cmd: cd third_party\mesa
+  - cmd: scons -j%NUMBER_OF_PROCESSORS% MSVC_VERSION=14.1 llvm=0 machie=x86_64 osmesa
+  - cmd: cd ..\..
+  - cmd: move third_party\mesa\build\windows-x86_64-debug\gallium\targets\osmesa\osmesa.dll test_data
+
+  - sh: sudo apt-get install -y libopenal-dev libosmesa6-dev
 
 build_script:
   - mkdir build
