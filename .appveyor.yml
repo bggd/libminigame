@@ -42,7 +42,13 @@ install:
   - cmd: cd ..\..
   - cmd: move third_party\mesa\build\windows-x86_64-debug\gallium\targets\osmesa\osmesa.dll test_data
 
-  - sh: sudo apt-get install -y libopenal-dev libosmesa6-dev
+  - sh: sudo apt-get install -y libopenal-dev
+
+  - sh: cd third_party/mesa
+  - sh: ./configure --build=x86_64-pc-linux-gnu --enable-osmesa
+  - sh: make -j%NUMBER_OF_PROCESSORS%
+  - sh: suto make install
+  - sh: cd ../../
 
 build_script:
   - mkdir build
