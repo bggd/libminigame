@@ -38,7 +38,7 @@ install:
   - cmd: python -m pip install scons==3.0.1
   - cmd: set PATH=%CD%\win_flex_bison;%PATH%
   - cmd: cd third_party\mesa
-  - cmd: scons -j%NUMBER_OF_PROCESSORS% MSVC_VERSION=14.1 llvm=0 machie=x86_64 osmesa
+  - cmd: scons -j%NUMBER_OF_PROCESSORS% MSVC_VERSION=14.1 llvm=0 machine=x86_64 osmesa
   - cmd: cd ..\..
   - cmd: move third_party\mesa\build\windows-x86_64-debug\gallium\targets\osmesa\osmesa.dll test_data
 
