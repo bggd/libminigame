@@ -36,7 +36,7 @@ install:
   - cmd: python -m pip install pypiwin32
   - cmd: python -m pip install wheel
   - cmd: python -m pip install scons==3.0.1
-  - cmd: set PATH=%CD%\winflexbison;%PATH%
+  - cmd: set PATH=%CD%\win_flex_bison;%PATH%
   - cmd: cd third_party\mesa
   - cmd: scons -j%NUMBER_OF_PROCESSORS% MSVC_VERSION=14.1 llvm=0 machie=x86_64 osmesa
   - cmd: cd ..\..
