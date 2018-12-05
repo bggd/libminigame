@@ -48,7 +48,7 @@ install:
 
   - sh: cd third_party/mesa
   - sh: ./autogen.sh --enable-debug
-  - sh: ./configure --build=x86_64-pc-linux-gnu --enable-osmesa
+  - sh: ./configure --build=x86_64-pc-linux-gnu --enable-osmesa --disable-driglx-direct --disable-dri
   - sh: make -j%NUMBER_OF_PROCESSORS%
   - sh: suto make install
   - sh: cd ../../
