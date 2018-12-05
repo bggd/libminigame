@@ -4,6 +4,7 @@
 #include "asset/test_asset_loader.hpp"
 #include "audio/test_audio_player.hpp"
 #include "window/test_window.hpp"
+#include "gfx/test_gfx_texture.hpp"
 
 
 int main(int argc, char** argv)

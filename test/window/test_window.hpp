@@ -40,8 +40,6 @@ void test_window()
   w.swap_buffers();
 
   w.close();
-
-  glfwTerminate();
 }
 
 TEST(Window, Test)
