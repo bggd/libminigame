@@ -21,8 +21,6 @@ install:
   - git clone -b release-1.8.1 --depth=1 https://github.com/abseil/googletest
   - git clone --depth=1 https://github.com/glfw/glfw
   - git clone -b mesa-18.2.6 --depth=1 https://github.com/mesa3d/mesa
-  - sh: wget https://mesa.freedesktop.org/archive/mesa-18.2.6.tar.gz
-  - sh: tar xf mesa-18.2.6.tar.gz
 
   - cd ..
 
@@ -50,7 +48,7 @@ install:
 
   - sh: cd third_party/mesa
   - sh: autoreconf -fi
-  - sh: ./configure --enable-debug --disable-gles1 --disable-gles2 --disable-dri --disable-dri3 --disable-glx --enable-osmesa  --disable-driglx-direct --disable-glx-tls --disable-llvm --with-gallium-drivers=swrast --with-platforms=surfaceless --disable-gbm --disable-egl
+  - sh: ./configure --enable-debug --disable-gles1 --disable-gles2 --disable-dri --disable-dri3 --disable-glx --enable-osmesa  --disable-driglx-direct --disable-glx-tls --disable-llvm --with-gallium-drivers=softpipe --with-platforms=surfaceless --disable-gbm --disable-egl
   - sh: make -j$(nproc)
   - sh: sudo make install
   - sh: cd ../../
@@ -75,4 +73,5 @@ test_script:
 
   - cmd: ..\build\Debug\test_libminigame.exe
   - sh: export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+  - sh: export MESA_DEBUG=1
   - sh: ../build/test_libminigame
