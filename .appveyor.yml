@@ -44,13 +44,13 @@ install:
   - cmd: cd ..\..
   - cmd: move third_party\mesa\build\windows-x86_64-debug\gallium\targets\osmesa\osmesa.dll test_data
 
-  - sh: sudo apt-get install -y libopenal-dev flex bison
+  - sh: sudo apt-get install -y libopenal-dev flex bison libdrm-dev
 
   - sh: pip2 install --user mako
 
   - sh: cd third_party/mesa
   - sh: autoreconf -fi
-  - sh: ./configure --enable-debug --disable-gles1 --disable-gles2 --disable-dri --disable-dri3 --disable-glx --enable-osmesa  --disable-driglx-direct --disable-glx-tls --disable-llvm --with-gallium-drivers=swrast --with-platforms=surfaceless --with-osmesa-bits=32
+  - sh: ./configure --enable-debug --disable-gles1 --disable-gles2 --disable-dri --disable-dri3 --disable-glx --enable-osmesa  --disable-driglx-direct --disable-glx-tls --disable-llvm --with-gallium-drivers=swrast --with-platforms=surfaceless
   - sh: make -j%NUMBER_OF_PROCESSORS%
   - sh: suto make install
   - sh: cd ../../
