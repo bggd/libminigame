@@ -50,7 +50,8 @@ install:
 
   - sh: cd third_party/mesa
   - sh: autoreconf -fi
-  - sh: ./configure --disable-xvmc --disable-glx --disable-dri --with-dri-drivers="" --with-gallium-drivers="" --disable-egl --with-egl-platforms="" --enable-osmesa --enable-gallium-llvm=no
+  - sh: ./configure --help
+    #- sh: ./configure --disable-xvmc --disable-glx --disable-dri --with-dri-drivers="" --with-gallium-drivers="" --disable-egl --with-egl-platforms="" --enable-osmesa --enable-gallium-llvm=no
   - sh: make -j%NUMBER_OF_PROCESSORS%
   - sh: suto make install
   - sh: cd ../../
