@@ -21,7 +21,7 @@ install:
   - git clone -b release-1.8.1 --depth=1 https://github.com/abseil/googletest
   - git clone --depth=1 https://github.com/glfw/glfw
   - git clone -b mesa-18.2.6 --depth=1 https://github.com/mesa3d/mesa
-  - sh: wget https://mesa.freedesktop.org/mesa-18.2.6.tar.gz
+  - sh: wget https://mesa.freedesktop.org/archive/mesa-18.2.6.tar.gz
   - sh: tar xf mesa-18.2.6.tar.gz
 
   - cd ..
