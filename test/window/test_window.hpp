@@ -37,6 +37,7 @@ void test_window()
   printf("GL_SHADING_LANGUAGE_VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
   glClear(GL_COLOR_BUFFER_BIT);
+  w.swap_buffers();
 
   w.close();
 
