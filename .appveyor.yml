@@ -49,7 +49,7 @@ install:
   - sh: pip2 install --user mako
 
   - sh: cd third_party/mesa
-  - sh: configure --enable-osmesa
+  - sh: ./configure --enable-osmesa
   - sh: make -j%NUMBER_OF_PROCESSORS%
   - sh: suto make install
   - sh: cd ../../
