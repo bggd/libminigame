@@ -48,7 +48,7 @@ install:
 
   - sh: cd third_party/mesa
   - sh: autoreconf -fi
-  - sh: ./configure --enable-debug --disable-gles1 --disable-gles2 --disable-dri --disable-dri3 --disable-glx --enable-osmesa  --disable-driglx-direct --disable-glx-tls --disable-llvm --with-gallium-drivers=softpipe --with-platforms=surfaceless --disable-gbm --disable-egl
+  - sh: ./configure --enable-debug --disable-gles1 --disable-gles2 --disable-dri --disable-dri3 --disable-glx --enable-osmesa  --disable-driglx-direct --disable-glx-tls --disable-llvm --with-gallium-drivers=swrast --with-platforms=surfaceless --disable-gbm --disable-egl
   - sh: make -j$(nproc)
   - sh: sudo make install
   - sh: cd ../../
