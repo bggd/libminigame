@@ -44,8 +44,10 @@ install:
 
   - sh: sudo apt-get install -y libopenal-dev flex bison
 
+  - sh: pip2 install --user mako
+
   - sh: cd third_party/mesa
-  - sh: ./autogen.sh
+  - sh: ./autogen.sh --enable-debug
   - sh: ./configure --build=x86_64-pc-linux-gnu --enable-osmesa
   - sh: make -j%NUMBER_OF_PROCESSORS%
   - sh: suto make install
