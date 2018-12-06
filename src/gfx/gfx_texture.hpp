@@ -8,6 +8,8 @@
 struct GfxTexture {
 
   GLuint id;
+  uint16_t w;
+  uint16_t h;
 
   void create_from_rgb(uint8_t* data, uint16_t width, uint16_t height) noexcept
   {
@@ -17,6 +19,8 @@ struct GfxTexture {
     GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
     GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
     GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
+    this->w = width;
+    this->h = height;
   }
 
   void destroy() noexcept

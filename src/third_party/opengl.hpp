@@ -42,6 +42,7 @@ using GLfloat = float;
 #define GL_RGB8 0x8051
 
 #define GL_UNSIGNED_BYTE 0x1401
+#define GL_FLOAT 0x1406
 
 #define GL_NO_ERROR 0
 #define GL_INVALID_ENUM 0x0500
@@ -52,6 +53,12 @@ using GLfloat = float;
 #define GL_OUT_OF_MEMORY 0x0505
 #define GL_INVALID_FRAMEBUFFER_OPERATION 0x0506
 #define GL_CONTEXT_LOST 0x0507
+
+#define GL_ARRAY_BUFFER 0x8892
+#define GL_STREAM_DRAW 0x88e0
+#define GL_BUFFER_SIZE 0x8764
+
+#define GL_TRIANGLES 0x0004
 
 #define GL_DEF(ret, name, ...) ret (*gl##name)(__VA_ARGS__) = NULL;
 
@@ -64,7 +71,20 @@ using GLfloat = float;
   GL_DEF(GLboolean, IsTexture, GLuint) \
   GL_DEF(void, TexParameteri, GLenum, GLenum, GLint) \
   GL_DEF(void, TexImage2D, GLenum, GLint, GLint, GLsizei, GLsizei, GLint, GLenum, GLenum, const GLvoid*) \
-  GL_DEF(void, DeleteTextures, GLsizei, const GLuint*)
+  GL_DEF(void, DeleteTextures, GLsizei, const GLuint*) \
+  GL_DEF(void, GenBuffers, GLenum, GLuint*) \
+  GL_DEF(void, BindBuffer, GLenum, GLuint) \
+  GL_DEF(GLboolean, IsBuffer, GLuint) \
+  GL_DEF(void, BufferData, GLenum, GLsizeiptr size, const GLvoid*, GLenum) \
+  GL_DEF(void, GetBufferParameteriv, GLenum, GLenum, GLint*) \
+  GL_DEF(void, DeleteBuffers, GLsizei, const GLuint*) \
+  GL_DEF(void, VertexAttribPointer, GLuint, GLint, GLenum, GLboolean, GLsizei, const GLvoid*) \
+  GL_DEF(void, GenVertexArrays, GLsizei, GLuint*) \
+  GL_DEF(void, BindVertexArray, GLuint) \
+  GL_DEF(GLboolean, IsVertexArray, GLuint) \
+  GL_DEF(void, EnableVertexAttribArray, GLuint) \
+  GL_DEF(void, DeleteVertexArrays, GLsizei, const GLuint*) \
+  GL_DEF(void, DrawArrays, GLenum, GLint, GLsizei)
 
 GL_FUNCS
 
