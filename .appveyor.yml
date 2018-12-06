@@ -6,6 +6,7 @@ shallow_clone: true
 
 cache:
   - win_flex_bison-2.5.10.zip
+  - osmesa_win
 
 init:
   - cmake --version
@@ -32,6 +33,7 @@ install:
   - cmd: if not exist win_flex_bison-2.5.10.zip appveyor DownloadFile "https://github.com/lexxmark/winflexbison/releases/download/v.2.5.10/win_flex_bison-2.5.10.zip"
   - cmd: 7z x -y -owin_flex_bison win_flex_bison-2.5.10.zip > nul
 
+  - cmd: if exist osmesa_win move osmesa_win third_party\mesa\build
   - cmd: python -m pip install Mako==1.0.7
   - cmd: python -m pip install pypiwin32
   - cmd: python -m pip install wheel
@@ -40,7 +42,8 @@ install:
   - cmd: cd third_party\mesa
   - cmd: scons -j%NUMBER_OF_PROCESSORS% MSVC_VERSION=14.1 llvm=0 machine=x86_64 osmesa
   - cmd: cd ..\..
-  - cmd: move third_party\mesa\build\windows-x86_64-debug\gallium\targets\osmesa\osmesa.dll test_data
+  - cmd: copy third_party\mesa\build\windows-x86_64-debug\gallium\targets\osmesa\osmesa.dll test_data
+  - cmd: move third_party\mesa\build osmesa_win
 
   - sh: sudo apt-get install -y libopenal-dev flex bison libdrm-dev
 
