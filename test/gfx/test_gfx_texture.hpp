@@ -10,7 +10,7 @@
 
 TEST(GfxTexture, Test)
 {
-  uint8_t rgb[32*32];
+  uint8_t rgb[32*32*3];
 
   Window w;
   w.open();
