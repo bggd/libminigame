@@ -9,7 +9,7 @@ struct GfxTexture {
 
   GLuint id;
 
-  void create_from_rgb(uint8_t* data, uint16_t width, uint16_t height)
+  void create_from_rgb(uint8_t* data, uint16_t width, uint16_t height) noexcept
   {
     GL_CHECK(glGenTextures(1, &this->id));
     GL_CHECK(glBindTexture(GL_TEXTURE_2D, this->id));
@@ -19,7 +19,7 @@ struct GfxTexture {
     GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
   }
 
-  void destroy()
+  void destroy() noexcept
   {
     GL_CHECK(glDeleteTextures(1, &this->id));
   }

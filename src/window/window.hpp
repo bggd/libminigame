@@ -9,13 +9,13 @@ struct Window {
 
   GLFWwindow* window;
 
-  void open();
-  void close();
-  void swap_buffers();
+  void open() noexcept;
+  void close() noexcept;
+  void swap_buffers() const noexcept;
 
 };
 
-void Window::open()
+void Window::open() noexcept
 {
   glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -27,13 +27,13 @@ void Window::open()
   glfwMakeContextCurrent(this->window);
 }
 
-void Window::close()
+void Window::close() noexcept
 {
   glfwDestroyWindow(this->window);
 }
 
 
-void Window::swap_buffers()
+void Window::swap_buffers() const noexcept
 {
   glfwSwapBuffers(this->window);
   glfwPollEvents();
