@@ -56,7 +56,7 @@ using GLfloat = float;
 #define GL_DEF(ret, name, ...) ret (*gl##name)(__VA_ARGS__) = NULL;
 
 #define GL_FUNCS \
-  GL_DEF(GLenum, GetError) \
+  GL_DEF(GLenum, GetError, GLvoid) \
   GL_DEF(GLubyte*, GetString, GLenum) \
   GL_DEF(void, Clear, GLbitfield) \
   GL_DEF(void, GenTextures, GLsizei, GLuint*) \
