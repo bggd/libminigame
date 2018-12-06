@@ -7,7 +7,6 @@ shallow_clone: true
 cache:
   - win_flex_bison-2.5.10.zip
   - osmesa_win
-  - osmesa_ubuntu
 
 init:
   - cmake --version
@@ -48,7 +47,6 @@ install:
 
   - sh: sudo apt-get install -y libopenal-dev flex bison libdrm-dev
 
-  - sh: if [ -d osmesa_ubuntu]; then mv osmesa_ubuntu third_party/mesa/build; fi
   - sh: pip2 install --user mako
 
   - sh: cd third_party/mesa
@@ -57,7 +55,6 @@ install:
   - sh: make -j$(nproc)
   - sh: sudo make install
   - sh: cd ../../
-  - sh: mv third_party/mesa/build osmesa_ubuntu
 
 build_script:
   - mkdir build
