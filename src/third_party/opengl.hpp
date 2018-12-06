@@ -3,6 +3,9 @@
 
 #include "glfw.hpp"
 
+#include "../third_party/debug_assert.hpp"
+
+#include <string>
 #include <stdint.h>
 
 using GLboolean = unsigned char;
@@ -40,9 +43,20 @@ using GLfloat = float;
 
 #define GL_UNSIGNED_BYTE 0x1401
 
+#define GL_NO_ERROR 0
+#define GL_INVALID_ENUM 0x0500
+#define GL_INVALID_VALUE 0x0501
+#define GL_INVALID_OPERATION 0x0502
+#define GL_STACK_OVERFLOW 0x0503
+#define GL_STACK_UNDERFLOW 0x0504
+#define GL_OUT_OF_MEMORY 0x0505
+#define GL_INVALID_FRAMEBUFFER_OPERATION 0x0506
+#define GL_CONTEXT_LOST 0x0507
+
 #define GL_DEF(ret, name, ...) ret (*gl##name)(__VA_ARGS__) = NULL;
 
 #define GL_FUNCS \
+  GL_DEF(GLenum, GetError) \
   GL_DEF(GLubyte*, GetString, GLenum) \
   GL_DEF(void, Clear, GLbitfield) \
   GL_DEF(void, GenTextures, GLsizei, GLuint*) \
@@ -64,6 +78,55 @@ bool load_gl() noexcept
   GL_FUNCS
 
   return true;
+}
+
+#define GL_CHECK(stmt) \
+  do { \
+    stmt; \
+    opengl_check_error(#stmt, __FILE__, __LINE__); \
+  } while (0);
+
+const char* opengl_err2str(GLenum err) noexcept
+{
+  switch (err) {
+    case GL_INVALID_ENUM: return "GL_INVALID_ENUM";
+    case GL_INVALID_VALUE: return "GL_INVALID_VALUE";
+    case GL_INVALID_OPERATION: return "GL_INVALID_OPERATION";
+    case GL_STACK_OVERFLOW: return "GL_STACK_OVERFLOW";
+    case GL_STACK_UNDERFLOW: return "GL_STACK_UNDERFLOW";
+    case GL_OUT_OF_MEMORY: return "GL_OUT_OF_MEMORY";
+    case GL_INVALID_FRAMEBUFFER_OPERATION: return "GL_INVALID_FRAMEBUFFER_OPERATION";
+    case GL_CONTEXT_LOST: return "GL_CONTEXT_LOST";
+    default: DEBUG_UNREACHABLE(assert_handler{});
+  }
+  return "";
+}
+
+void opengl_check_error(const char* stmt, const char* file, unsigned int line) noexcept
+{
+  struct gl_assert_handler : debug_assert::default_handler, debug_assert::set_level<-1>
+  {
+    static void handle(const debug_assert::source_location&, const char*, const char* err_msg, const char* stmt, const char* file, unsigned int line)
+    {
+      debug_assert::source_location loc;
+      loc.file_name = file;
+      loc.line_number = line;
+
+      try {
+        std::string str = std::string(stmt) + " " + std::string(err_msg);
+
+        debug_assert::default_handler::handle(loc, str.data());
+      }
+      catch (const std::exception& e) {
+        DEBUG_UNREACHABLE(assert_handler{}, e.what());
+        abort();
+      }
+    }
+  };
+
+  GLenum err;
+  err = glGetError();
+  DEBUG_ASSERT(err == GL_NO_ERROR, gl_assert_handler{}, opengl_err2str(err), stmt, file, line);
 }
 
 #endif // MINIGAME_SRC_THIRD_PARTY_OPENGL_HPP_INCLUDED
