@@ -14,6 +14,10 @@ extern "C" {
 extern void MINIGAME_EXPORT minigame_init();
 extern void MINIGAME_EXPORT minigame_deinit();
 
+extern void MINIGAME_EXPORT minigame_window_open();
+extern void MINIGAME_EXPORT minigame_window_swap_buffers();
+extern void MINIGAME_EXPORT minigame_window_close();
+
 #ifdef __cplusplus
 }
 #endif

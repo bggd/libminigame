@@ -2,6 +2,7 @@
 
 #include "asset/asset_loader.hpp"
 #include "audio/audio_player.hpp"
+#include "window/window.hpp"
 #include "third_party/glfw.hpp"
 #include "third_party/debug_assert.hpp"
 
@@ -20,6 +21,8 @@ static std::thread g_thread_audio_update;
 
 static ALCdevice* g_al_device;
 static ALCcontext* g_al_ctx;
+
+static Window g_window;
 
 static void init_threads() noexcept
 {
@@ -109,6 +112,21 @@ void minigame_deinit()
   deinit_glfw();
   deinit_openal();
   deinit_threads();
+}
+
+void minigame_window_open()
+{
+  g_window.open();
+}
+
+void minigame_window_swap_buffers()
+{
+  g_window.swap_buffers();
+}
+
+void minigame_window_close()
+{
+  g_window.close();
 }
 
 }
