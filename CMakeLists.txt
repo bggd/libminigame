@@ -10,11 +10,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(stb_image OBJECT src/third_party/stb_image.c)
 add_library(stb_vorbis OBJECT src/third_party/stb_vorbis.c)
-add_library(third_party_glfw STATIC src/third_party/glfw.c)
+add_library(third_party_glfw OBJECT src/third_party/glfw.c)
  
 set(Libraries stb_image stb_vorbis third_party_glfw)
 
- if (CMAKE_CXX_COMPILER_ID STREQUAL GNU)
+if (NOT WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL GNU)
   find_package(Threads REQUIRED)
   set(Libraries ${Libraries} Threads::Threads)
 
