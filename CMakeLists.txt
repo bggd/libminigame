@@ -8,11 +8,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_library(stb_image OBJECT src/third_party/stb_image.c)
-add_library(stb_vorbis OBJECT src/third_party/stb_vorbis.c)
-add_library(third_party_glfw OBJECT src/third_party/glfw.c)
+add_library(third_party OBJECT
+  src/third_party/stb_image.c
+  src/third_party/stb_vorbis.c
+  src/third_party/glfw.c
+)
  
-set(Libraries stb_image stb_vorbis third_party_glfw)
+set(Libraries)
 
 if (NOT WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL GNU)
   find_package(Threads REQUIRED)
@@ -29,9 +31,9 @@ endif()
 find_package(OpenAL REQUIRED)
 set(Libraries ${Libraries} ${OPENAL_LIBRARY})
 
-add_library(minigame SHARED src/minigame.cpp)
+add_library(minigame SHARED $<TARGET_OBJECTS:third_party> src/minigame.cpp)
 target_include_directories(minigame PRIVATE ${OPENAL_INCLUDE_DIR})
-target_link_libraries(minigame PRIVATE ${Libraries})
+target_link_libraries(minigame PRIVATE ${OPENAL_LIBRARY})
 target_compile_options(minigame PRIVATE
   $<$<CXX_COMPILER_ID:GNU>: -pedantic -Wall -Wextra -Werror>
   $<$<CXX_COMPILER_ID:MSVC>: /permissive- /W4 /WX>
@@ -45,7 +47,7 @@ if(BUILD_TESTING)
 
   set(Libraries ${Libraries} gtest)
 
-  add_executable(test_libminigame test/main.cpp)
+  add_executable(test_libminigame $<TARGET_OBJECTS:third_party> test/main.cpp)
   target_compile_options(test_libminigame PRIVATE
     $<$<CXX_COMPILER_ID:GNU>: -pedantic -Wall -Wextra -Werror>
     $<$<CXX_COMPILER_ID:MSVC>: /permissive- /W4 /WX>
@@ -57,7 +59,7 @@ if(BUILD_TESTING)
   target_link_libraries(test_libminigame PRIVATE ${Libraries})
   add_test(NAME test COMMAND test_libminigame WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test_data)
 
-  add_executable(test_libminigame_capi test/c_api.cpp)
+  add_executable(test_libminigame_capi $<TARGET_OBJECTS:third_party> test/c_api.cpp)
   target_compile_options(test_libminigame_capi PRIVATE
     $<$<CXX_COMPILER_ID:GNU>: -pedantic -Wall -Wextra -Werror>
     $<$<CXX_COMPILER_ID:MSVC>: /permissive- /W4 /WX>
