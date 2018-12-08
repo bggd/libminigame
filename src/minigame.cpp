@@ -4,6 +4,7 @@
 #include "audio/audio_player.hpp"
 #include "window/window.hpp"
 #include "third_party/glfw.hpp"
+#include "third_party/opengl.hpp"
 #include "third_party/debug_assert.hpp"
 
 #include <thread>
@@ -117,6 +118,8 @@ void minigame_deinit()
 void minigame_window_open()
 {
   g_window.open();
+  bool ok = load_gl();
+  DEBUG_ASSERT(ok, assert_handler{});
 }
 
 void minigame_window_swap_buffers()
