@@ -38,6 +38,7 @@ target_compile_options(minigame PRIVATE
   $<$<CXX_COMPILER_ID:GNU>: -pedantic -Wall -Wextra -Werror>
   $<$<CXX_COMPILER_ID:MSVC>: /permissive- /W4 /WX>
 )
+set(TARGET minigame PROPERTY POSITION_INDEPENDENT_CODE ON)
 
    
 if(BUILD_TESTING)
