@@ -13,6 +13,9 @@ add_library(third_party OBJECT
   src/third_party/stb_vorbis.c
   src/third_party/glfw.c
 )
+if (NOT WIN32)
+  set(TARGET third_party PROPERTY POSITION_INDEPENDENT_CODE ON)
+endif()
  
 set(Libraries)
 
@@ -38,7 +41,6 @@ target_compile_options(minigame PRIVATE
   $<$<CXX_COMPILER_ID:GNU>: -pedantic -Wall -Wextra -Werror>
   $<$<CXX_COMPILER_ID:MSVC>: /permissive- /W4 /WX>
 )
-set(TARGET minigame PROPERTY POSITION_INDEPENDENT_CODE ON)
 
    
 if(BUILD_TESTING)

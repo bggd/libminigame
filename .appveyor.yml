@@ -65,7 +65,8 @@ build_script:
 
   - sh: cmake ..
 
-  - cmake --build . --config Debug
+  - cmd: msbuild /maxcpucount:%NUMBER_OF_PROCESSORS% libminigame.sln
+  - sh: make -j$(nproc)
 
 test_script:
   - cd ..
