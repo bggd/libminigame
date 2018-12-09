@@ -8,15 +8,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_library(third_party OBJECT
-  src/third_party/stb_image.c
-  src/third_party/stb_vorbis.c
-  src/third_party/glfw.c
-)
-if (NOT WIN32)
-  set(TARGET third_party PROPERTY POSITION_INDEPENDENT_CODE ON)
-endif()
- 
 set(Libraries)
 
 if (NOT WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL GNU)
@@ -34,7 +25,12 @@ endif()
 find_package(OpenAL REQUIRED)
 set(Libraries ${Libraries} ${OPENAL_LIBRARY})
 
-add_library(minigame SHARED $<TARGET_OBJECTS:third_party> src/minigame.cpp)
+add_library(minigame SHARED 
+  src/minigame.cpp
+  src/third_party/stb_image.c
+  src/third_party/stb_vorbis.c
+  src/third_party/glfw.c
+)
 target_include_directories(minigame PRIVATE ${OPENAL_INCLUDE_DIR})
 target_link_libraries(minigame PRIVATE ${OPENAL_LIBRARY})
 target_compile_options(minigame PRIVATE
@@ -44,6 +40,12 @@ target_compile_options(minigame PRIVATE
 
    
 if(BUILD_TESTING)
+
+  add_library(third_party OBJECT
+    src/third_party/stb_image.c
+    src/third_party/stb_vorbis.c
+    src/third_party/glfw.c
+  )
 
   add_library(gtest STATIC third_party/googletest/googletest/src/gtest-all.cc)
   target_include_directories(gtest PRIVATE third_party/googletest/googletest/include third_party/googletest/googletest)
@@ -62,7 +64,7 @@ if(BUILD_TESTING)
   target_link_libraries(test_libminigame PRIVATE ${Libraries})
   add_test(NAME test COMMAND test_libminigame WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test_data)
 
-  add_executable(test_libminigame_capi $<TARGET_OBJECTS:third_party> test/c_api.cpp)
+  add_executable(test_libminigame_capi test/c_api.cpp)
   target_compile_options(test_libminigame_capi PRIVATE
     $<$<CXX_COMPILER_ID:GNU>: -pedantic -Wall -Wextra -Werror>
     $<$<CXX_COMPILER_ID:MSVC>: /permissive- /W4 /WX>

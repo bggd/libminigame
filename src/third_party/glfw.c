@@ -1,4 +1,7 @@
+#include "disable_warning_push.h"
+
 #ifdef _WIN32
+
   #define _GLFW_WIN32
 
   #include "../../third_party/glfw/src/context.c"
@@ -20,3 +23,5 @@
   #include "../../third_party/glfw/src/osmesa_context.c"
 
 #endif
+
+#include "disable_warning_pop.h"
