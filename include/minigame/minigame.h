@@ -11,12 +11,12 @@ extern "C" {
     #define MINIGAME_EXPORT
 #endif
 
-extern void MINIGAME_EXPORT minigame_init();
-extern void MINIGAME_EXPORT minigame_deinit();
+MINIGAME_EXPORT extern void minigame_init();
+MINIGAME_EXPORT extern void minigame_deinit();
 
-extern void MINIGAME_EXPORT minigame_window_open();
-extern void MINIGAME_EXPORT minigame_window_swap_buffers();
-extern void MINIGAME_EXPORT minigame_window_close();
+MINIGAME_EXPORT extern void minigame_window_open();
+MINIGAME_EXPORT extern void minigame_window_swap_buffers();
+MINIGAME_EXPORT extern void minigame_window_close();
 
 #ifdef __cplusplus
 }
