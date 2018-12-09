@@ -27,7 +27,9 @@
 #pragma GCC diagnostic ignored "-Wunused-value"
 #pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#if __GNUC__ >= 8
 #pragma GCC diagnostic ignored "-Wcast-function-type"
+#endif
 
 #endif // __GNUC__
 
