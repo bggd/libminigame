@@ -73,7 +73,7 @@ if(BUILD_TESTING)
     third_party/googletest/googletest/include
     ${OPENAL_INCLUDE_DIR}
   )
-  target_link_libraries(test_libminigame_capi PRIVATE minigame gtest)
+target_link_libraries(test_libminigame_capi PRIVATE minigame ${Libraries})
   add_test(NAME test_capi COMMAND test_libminigame_capi WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test_data)
 
 
