@@ -115,6 +115,12 @@ void minigame_deinit()
   deinit_threads();
 }
 
+void minigame_asset_load(const char* path, enum MINIGAME_ASSET_TYPE type)
+{
+  if (type == MINIGAME_ASSET_TYPE_IMAGE_TGA) { g_asset_loader.load(path, AssetImageTGA{}); }
+  else if (type == MINIGAME_ASSET_TYPE_AUDIO_VORBIS) { g_asset_loader.load(path, AssetAudioVorbis{}); }
+}
+
 void minigame_window_open()
 {
   g_window.open();

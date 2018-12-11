@@ -11,8 +11,16 @@ extern "C" {
     #define MINIGAME_EXPORT
 #endif
 
+enum MINIGAME_ASSET_TYPE {
+  MINIGAME_ASSET_TYPE_IMAGE_TGA,
+  MINIGAME_ASSET_TYPE_AUDIO_VORBIS,
+};
+
+
 MINIGAME_EXPORT extern void minigame_init();
 MINIGAME_EXPORT extern void minigame_deinit();
+
+MINIGAME_EXPORT extern void minigame_asset_load(const char* path, enum MINIGAME_ASSET_TYPE type);
 
 MINIGAME_EXPORT extern void minigame_window_open();
 MINIGAME_EXPORT extern void minigame_window_swap_buffers();
