@@ -54,6 +54,7 @@ struct AssetAudio : AssetBase {
 
 };
 
+#include "asset_file.hpp"
 #include "asset_tga.hpp"
 #include "asset_vorbis.hpp"
 
