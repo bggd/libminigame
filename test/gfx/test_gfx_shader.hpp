@@ -11,18 +11,23 @@ TEST(GfxShader, Test)
 {
   const char* vertex_glsl = R"(
 #version 330
-in vec2 pos;
+layout(location = 0) in vec2 pos;
+layout(location = 1) in vec2 uv;
+out vec2 v_uv;
 void main()
 {
   gl_Position = vec4(pos, 0.0, 1.0);
+  v_uv = uv;
 }
 )";
   const char* fragment_glsl = R"(
 #version 330
-out vec4 fragColor;
+uniform sampler2D tex;
+in vec2 v_uv;
+out vec4 frag_color;
 void main()
 {
-  fragColor = vec4(1.0, 1.0, 1.0, 1.0);
+  frag_color = texture2D(tex, v_uv);
 }
 )";
 
