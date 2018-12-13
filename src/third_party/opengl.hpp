@@ -11,6 +11,7 @@
 using GLboolean = unsigned char;
 using GLvoid = void;
 using GLbyte  = char;
+using GLchar  = char;
 using GLubyte  = unsigned char;
 using GLshort = int16_t;
 using GLuhort = uint16_t;
@@ -60,6 +61,12 @@ using GLfloat = float;
 
 #define GL_TRIANGLES 0x0004
 
+#define GL_COMPILE_STATUS 0x8b81
+#define GL_LINK_STATUS 0x8b82
+
+#define GL_FRAGMENT_SHADER 0x8b30
+#define GL_VERTEX_SHADER 0x8b31
+
 #define GL_DEF(ret, name, ...) ret (*gl##name)(__VA_ARGS__) = NULL;
 
 #define GL_FUNCS \
@@ -84,7 +91,17 @@ using GLfloat = float;
   GL_DEF(GLboolean, IsVertexArray, GLuint) \
   GL_DEF(void, EnableVertexAttribArray, GLuint) \
   GL_DEF(void, DeleteVertexArrays, GLsizei, const GLuint*) \
-  GL_DEF(void, DrawArrays, GLenum, GLint, GLsizei)
+  GL_DEF(void, DrawArrays, GLenum, GLint, GLsizei) \
+  GL_DEF(GLuint, CreateProgram, GLvoid) \
+  GL_DEF(GLuint, CreateShader, GLenum) \
+  GL_DEF(void, ShaderSource, GLuint, GLsizei, const GLchar**, const GLint*) \
+  GL_DEF(void, CompileShader, GLuint) \
+  GL_DEF(void, GetShaderiv, GLuint, GLenum, GLint*) \
+  GL_DEF(void, AttachShader, GLuint, GLuint) \
+  GL_DEF(void, LinkProgram, GLuint) \
+  GL_DEF(void, GetProgramiv, GLuint, GLenum, GLint*) \
+  GL_DEF(void, DetachShader, GLuint, GLuint) \
+  GL_DEF(void, DeleteProgram, GLuint)
 
 GL_FUNCS
 
