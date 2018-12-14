@@ -25,11 +25,15 @@ endif()
 find_package(OpenAL REQUIRED)
 set(Libraries ${Libraries} ${OPENAL_LIBRARY})
 
-add_library(minigame SHARED 
-  src/minigame.cpp
+add_library(third_party OBJECT
   src/third_party/stb_image.c
   src/third_party/stb_vorbis.c
   src/third_party/glfw.c
+)
+
+add_library(minigame SHARED 
+  $<TARGET_OBJECTS:third_party>
+  src/minigame.cpp
 )
 target_include_directories(minigame PRIVATE ${OPENAL_INCLUDE_DIR})
 target_link_libraries(minigame PRIVATE ${OPENAL_LIBRARY})
@@ -40,12 +44,6 @@ target_compile_options(minigame PRIVATE
 
    
 if(BUILD_TESTING)
-
-  add_library(third_party OBJECT
-    src/third_party/stb_image.c
-    src/third_party/stb_vorbis.c
-    src/third_party/glfw.c
-  )
 
   add_library(gtest STATIC third_party/googletest/googletest/src/gtest-all.cc)
   target_include_directories(gtest PRIVATE third_party/googletest/googletest/include third_party/googletest/googletest)
