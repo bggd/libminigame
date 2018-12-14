@@ -32,7 +32,9 @@ add_library(third_party OBJECT
 )
 
 add_library(minigame SHARED 
-  $<TARGET_OBJECTS:third_party>
+  src/third_party/stb_image.c
+  src/third_party/stb_vorbis.c
+  src/third_party/glfw.c
   src/minigame.cpp
 )
 target_include_directories(minigame PRIVATE ${OPENAL_INCLUDE_DIR})
