@@ -58,6 +58,6 @@ struct AssetAudio : AssetBase {
 #include "asset_tga.hpp"
 #include "asset_vorbis.hpp"
 
-using asset_t = std::variant<AssetImageTGA, AssetAudioVorbis>;
+using asset_t = std::variant<AssetFile, AssetImageTGA, AssetAudioVorbis>;
 
 #endif // MINIGAME_SRC_ASSET_ASSET_HPP_INCLUDED
