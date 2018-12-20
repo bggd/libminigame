@@ -1,8 +1,7 @@
 #ifndef MINIGAME_SRC_THIRD_PARTY_OPENGL_HPP_INCLUDED
 #define MINIGAME_SRC_THIRD_PARTY_OPENGL_HPP_INCLUDED
 
-#include "glfw.hpp"
-
+#include "../third_party/glfw.hpp"
 #include "../third_party/debug_assert.hpp"
 
 #include <string>
@@ -105,6 +104,7 @@ using GLfloat = float;
   GL_DEF(void, ClearColor, GLfloat, GLfloat, GLfloat, GLfloat)
 
 GL_FUNCS
+
 
 bool load_gl() noexcept
 {

@@ -2,6 +2,7 @@
 #define MINIGAME_SRC_ASSET_ASSET_HPP_INCLUDED
 
 #include "../third_party/debug_assert.hpp"
+#include "../gfx/gfx_texture.hpp"
 
 #include <variant>
 #include <array>
@@ -29,9 +30,13 @@ struct AssetImage : AssetBase {
   uint16_t width;
   uint16_t height;
   uint8_t* data;
+  GfxTexture texture;
+  bool is_uploaded = false;
 
   virtual void load_from_memory(uint8_t*, size_t) noexcept = 0;
   virtual void unload() noexcept = 0;
+  void create_texture() noexcept;
+  void destroy_texture() noexcept;
 
 };
 
@@ -114,6 +119,17 @@ std::shared_ptr<AssetBase> asset_create(asset_t type, uint8_t* data, size_t leng
     DEBUG_UNREACHABLE(assert_handler{}, e.what());
     abort();
   }
+}
+
+void AssetImage::create_texture() noexcept
+{
+  this->texture.create_from_rgb(this->data, this->width, this->height);
+  this->is_uploaded = true;
+}
+
+void AssetImage::destroy_texture() noexcept
+{
+  if (this->is_uploaded) { this->texture.destroy(); }
 }
 
 #endif // MINIGAME_SRC_ASSET_ASSET_HPP_INCLUDED

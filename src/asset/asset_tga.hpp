@@ -40,6 +40,7 @@ struct AssetImageTGA : AssetImage {
   void unload() noexcept override
   {
     stbi_image_free(this->data);
+    this->destroy_texture();
   }
 
 };
