@@ -57,27 +57,9 @@ void AssetLoader::thread_for_load_file() noexcept
 
     AssetFile af = std::move(*opt);
 
-    std::ifstream file(af.path.data(), std::ios_base::binary | std::ios_base::ate);
+    asset_load_file(af.path, &af.data, &af.length);
 
-    DEBUG_ASSERT(file.is_open(), assert_handler{});
-
-    auto file_len = file.tellg();
-    DEBUG_ASSERT(file_len, assert_handler{});
-    file.seekg(0, std::ios_base::beg);
-
-    static_assert(sizeof(char) == sizeof(uint8_t));
-    uint8_t* buf = new uint8_t[file_len];
-
-    if (file.read((char*)buf, file_len)) {
-      af.data = buf;
-      af.length = file_len;
-
-      this->queue_decode.emplace(std::move(af));
-    }
-    else {
-      fprintf(stderr, "couldn't read file: %s\n", af.path.data());
-      abort();
-    }
+    this->queue_decode.emplace(std::move(af));
   }
 }
 
@@ -93,29 +75,7 @@ void AssetLoader::thread_for_decode_buffer() noexcept
 
     AssetFile af = std::move(*opt);
 
-    AssetBase* ap = std::visit([](auto x) {
-      try { return static_cast<AssetBase*>(new decltype(x)); }
-      catch (const std::exception& e) { DEBUG_UNREACHABLE(assert_handler{}, e.what()); abort(); }
-    }, af.type);
-
-    DEBUG_ASSERT(ap, assert_handler{});
-
-    ap->load_from_memory(af.data, af.length);
-
-    try {
-      this->assets[af.path] = std::shared_ptr<AssetBase>(
-        ap,
-        [] (AssetBase* p) {
-          DEBUG_ASSERT(p, assert_handler{});
-          p->unload();
-          delete p;
-        }
-      );
-    }
-    catch (const std::exception& e) {
-      DEBUG_UNREACHABLE(assert_handler{}, e.what());
-      abort();
-    }
+    this->assets[af.path] = asset_create(af.type, af.data, af.length);
 
     DEBUG_ASSERT(this->task_count > 0, assert_handler{});
     this->task_count--;
