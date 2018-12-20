@@ -12,6 +12,7 @@ struct Window {
   void open() noexcept;
   void close() noexcept;
   void swap_buffers() const noexcept;
+  bool has_close_request() const noexcept;
 
 };
 
@@ -37,6 +38,11 @@ void Window::swap_buffers() const noexcept
 {
   glfwSwapBuffers(this->window);
   glfwPollEvents();
+}
+
+bool Window::has_close_request() const noexcept
+{
+  return glfwWindowShouldClose(this->window);
 }
 
 #endif // MINIGAME_SRC_WINDOW_WINDOW_HPP_INCLUDED

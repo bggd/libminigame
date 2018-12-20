@@ -29,6 +29,8 @@ void test_window()
 
   w.open();
 
+  ASSERT_FALSE(w.has_close_request());
+
   ASSERT_TRUE(load_gl());
 
   printf("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
