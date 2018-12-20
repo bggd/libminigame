@@ -27,7 +27,7 @@ using GLfloat = float;
 #define GL_FALSE 0
 #define GL_TRUE 1
 
-#define GL_COLOR_BUFFER_BIT 0x00000100
+#define GL_COLOR_BUFFER_BIT 0x00004000
 
 #define GL_VENDOR 0x1f00
 #define GL_RENDERER 0x1f01
@@ -101,7 +101,8 @@ using GLfloat = float;
   GL_DEF(void, LinkProgram, GLuint) \
   GL_DEF(void, GetProgramiv, GLuint, GLenum, GLint*) \
   GL_DEF(void, DetachShader, GLuint, GLuint) \
-  GL_DEF(void, DeleteProgram, GLuint)
+  GL_DEF(void, DeleteProgram, GLuint) \
+  GL_DEF(void, ClearColor, GLfloat, GLfloat, GLfloat, GLfloat)
 
 GL_FUNCS
 
