@@ -102,7 +102,8 @@ using GLfloat = float;
   GL_DEF(void, DetachShader, GLuint, GLuint) \
   GL_DEF(void, DeleteProgram, GLuint) \
   GL_DEF(void, ClearColor, GLfloat, GLfloat, GLfloat, GLfloat) \
-  GL_DEF(void, UseProgram, GLuint)
+  GL_DEF(void, UseProgram, GLuint) \
+  GL_DEF(void, Viewport, GLint, GLint, GLsizei, GLsizei)
 
 GL_FUNCS
 
