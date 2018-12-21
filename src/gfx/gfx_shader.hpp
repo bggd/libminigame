@@ -49,6 +49,11 @@ struct GfxShader {
     GL_CHECK(glDeleteProgram(this->id));
   }
 
+  void use() noexcept
+  {
+    GL_CHECK(glUseProgram(this->id));
+  }
+
 };
 
 #endif // MINIGAME_SRC_GFX_GFX_SHADER_HPP_INCLUDED
