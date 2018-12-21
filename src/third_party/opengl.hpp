@@ -39,7 +39,9 @@ using GLfloat = float;
 #define GL_NEAREST 0x2600
 
 #define GL_RGB 0x1907
+#define GL_RGBA 0x1908
 #define GL_RGB8 0x8051
+#define GL_RGBA8 0x8058
 
 #define GL_UNSIGNED_BYTE 0x1401
 #define GL_FLOAT 0x1406

@@ -123,7 +123,15 @@ std::shared_ptr<AssetBase> asset_create(asset_t type, uint8_t* data, size_t leng
 
 void AssetImage::create_texture() noexcept
 {
-  this->texture.create_from_rgb(this->data, this->width, this->height);
+  if (this->format == AssetImage::PixelFormat::RGB) {
+    this->texture.create_from_rgb(this->data, this->width, this->height);
+  }
+  else if (this->format == AssetImage::PixelFormat::RGBA) {
+    this->texture.create_from_rgba(this->data, this->width, this->height);
+  }
+  else {
+    DEBUG_UNREACHABLE(assert_handler{});
+  }
   this->is_uploaded = true;
 }
 
