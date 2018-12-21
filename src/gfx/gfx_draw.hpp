@@ -116,6 +116,7 @@ void GfxDraw::draw() noexcept
     prev_tex = tex;
   }
 
+  this->textures.clear();
   this->vertices.clear();
 }
 
