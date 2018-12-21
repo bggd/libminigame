@@ -46,8 +46,8 @@ void GfxDraw::create(int32_t num_quad) noexcept
   GL_CHECK(glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &n));
   DEBUG_ASSERT(n == bytes, assert_handler{});
 
-  GL_CHECK(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)0));
-  GL_CHECK(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)offsetof(GfxDraw::Vertex, u)));
+  GL_CHECK(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*4, (const GLvoid*)0));
+  GL_CHECK(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*4, (const GLvoid*)(sizeof(GLfloat)*2)));
 
   try {
     this->textures.reserve(num_quad);

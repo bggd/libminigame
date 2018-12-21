@@ -12,6 +12,7 @@ struct GfxShader {
   void create_from_memory(const char* vertex_glsl, const char* fragment_glsl) noexcept;
   void destroy() noexcept;
   void use() noexcept;
+  void set_uniform_mat4(GLint location, GLsizei count, const GLfloat* value) noexcept;
 
 };
 
@@ -60,5 +61,9 @@ void GfxShader::use() noexcept
   GL_CHECK(glUseProgram(this->id));
 }
 
+void GfxShader::set_uniform_mat4(GLint location, GLsizei count, const GLfloat* value) noexcept
+{
+  GL_CHECK(glUniformMatrix4fv(location, count, false, value));
+}
 
 #endif // MINIGAME_SRC_GFX_GFX_SHADER_HPP_INCLUDED
