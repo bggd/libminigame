@@ -33,7 +33,7 @@ void GfxDraw::create(int32_t num_quad) noexcept
   GL_CHECK(glBindVertexArray(this->vao));
   DEBUG_ASSERT(glIsVertexArray(this->vao), assert_handler{});
   GL_CHECK(glEnableVertexAttribArray(0));
-  GL_CHECK(glEnableVertexAttribArray(2));
+  GL_CHECK(glEnableVertexAttribArray(1));
 
   GLsizeiptr bytes = sizeof(GfxDraw::Vertex) * num_quad * 6;
 
@@ -112,7 +112,7 @@ void GfxDraw::draw() noexcept
   GfxTexture* prev_tex = nullptr;
   for (GfxTexture* tex : this->textures) {
     if (prev_tex != tex) { tex->bind(); }
-    GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(this->vertices.size() / 3)));
+    GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(this->vertices.size())));
     prev_tex = tex;
   }
 
