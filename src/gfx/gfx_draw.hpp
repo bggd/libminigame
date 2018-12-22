@@ -103,18 +103,31 @@ void GfxDraw::draw_texture(GfxTexture* tex, float x, float y) noexcept
 
 void GfxDraw::draw() noexcept
 {
+  if (this->textures.empty()) { return; }
+
   GLsizeiptr bytes = sizeof(GfxDraw::Vertex) * this->vertices.size();
 
   GL_CHECK(glBindVertexArray(this->vao));
   GL_CHECK(glBufferData(GL_ARRAY_BUFFER, bytes, nullptr, GL_STREAM_DRAW));
   GL_CHECK(glBufferData(GL_ARRAY_BUFFER, bytes, this->vertices.data(), GL_STREAM_DRAW));
 
-  GfxTexture* prev_tex = nullptr;
+  GfxTexture* prev_tex = this->textures[0];
+  size_t base = 0;
+  size_t count = 0;
+  prev_tex->bind();
+
   for (GfxTexture* tex : this->textures) {
-    if (prev_tex != tex) { tex->bind(); }
-    GL_CHECK(glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(this->vertices.size())));
-    prev_tex = tex;
+    if (prev_tex != tex) {
+      GL_CHECK(glDrawArrays(GL_TRIANGLES, static_cast<GLint>(base), static_cast<GLsizei>(count)));
+      tex->bind();
+      prev_tex = tex;
+      base += count;
+      count = 0;
+    }
+    count += 6;
   }
+
+  GL_CHECK(glDrawArrays(GL_TRIANGLES, static_cast<GLint>(base), static_cast<GLsizei>(count)));
 
   this->textures.clear();
   this->vertices.clear();
